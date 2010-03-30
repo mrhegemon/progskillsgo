@@ -42,7 +42,7 @@ func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
 	return whatever, nil
 }
 
-func(s *SetImp) Add(lines []string, T TargetFactory) (string, os.Error) {
+func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 	//again, essentially the same as the line above, except that I think
 	//this is the one where we'll actually do something.
 	
@@ -88,6 +88,7 @@ func NewSet() Set {
 type TargImp struct {
 	var name string
 	var dependencies []string
+	var dagset Set
 }
 
 func(t *TargImp) isDependent(depend string) bool {
@@ -97,14 +98,26 @@ func(t *TargImp) isDependent(depend string) bool {
 	return false
 }
 
-/*func(t *TargImp) ApplyPreq(a Action) os.Error {
+func(t *TargImp) ApplyPreq(a Action) os.Error {
 	for _, y := range t.dependencies {
-		//somehow get the target for y
-		//send a to that target && store the resulting os.Error in err
-		if err != nil { return err }
+		targ := dagset.Get(y)
+		//if the target doesn't exist, send an error
+		if targ:= dagset.Get(y)targ == nil { 
+			return os.NewError("non-existant Target:  " + y) 
+		}
+		
+		//if the targets prereqs sent an error, send it on
+		if err1 := targ.ApplyPreq(a); err1 != nil {
+			return err1
+		}
+		
+		//if the target sent an error, send it on
+		if err2 := targ.Apply(a); err2 != nil {
+			return err2
+		}
 	}
 	return nil
-}*/
+}
 
 func(t *TargImp) Name() string {
 	return t.Name
