@@ -1,7 +1,7 @@
 package dag
 
 type SetImp struct {
-	setmap map[string]string
+	setmap map[string]Target
 }
 
 func(s *SetImp) Get(name string) Target {
