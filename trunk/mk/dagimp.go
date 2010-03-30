@@ -85,3 +85,54 @@ func NewSet() Set {
 	return n
 }
 
+type TargImp struct {
+	var name string
+	var dependencies []string
+}
+
+func(t *TargImp) isDependent(depend string) bool {
+	for _, y := range t.dependencies {
+		if y == depend { return true }
+	}
+	return false
+}
+
+/*func(t *TargImp) ApplyPreq(a Action) os.Error {
+	for _, y := range t.dependencies {
+		//somehow get the target for y
+		//send a to that target && store the resulting os.Error in err
+		if err != nil { return err }
+	}
+	return nil
+}*/
+
+func(t *TargImp) Name() string {
+	return t.Name
+}
+
+func(t *TargImp) String() string {
+	var toReturn string = t.Name() + ":\t"
+	for _, y := dependencies {
+		toReturn += y + "  "
+	}
+	return toReturn
+}
+
+func(t *TargImp) Merge(other Target) (Target, os.Error) {
+	x := other.(*TargImp)
+	if x.Name() != t.Name() {
+		return os.NewError("cannot merge targets with different names")
+	}
+	
+	for _, y := range other.dependencies {
+		if !t.isDependent(y) {
+			t.dependencies[len(t.dependencies)] = y
+		}
+	}
+	
+	return t, _
+}
+
+func(t *TargImp) Apply(a Action) os.Error {
+	return a(t)
+}
