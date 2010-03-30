@@ -69,7 +69,14 @@ func(s *SetImp) Put(t Target) (string, os.Error) {
 	
 	return s.Get(t.Name), _
 }
-		
+
+func(s *SetImp) String() string {
+	var toReturn string
+	for f, g := range s.setmap {
+		toReturn += "[" + f + "] = " + g.String() + "\n"
+	}
+	return toReturn
+}		
 
 //Returns a new SetImp
 func NewSet() Set {
@@ -77,3 +84,4 @@ func NewSet() Set {
 	n.setmap = make(map[string] Target)
 	return n
 }
+
