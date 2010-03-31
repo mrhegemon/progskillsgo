@@ -1,3 +1,9 @@
+/*
+Main function
+
+Authors: William Broza, Tym Lipari
+*/
+
 package main
 
 import ("dag"; "flag"; "os"; "fmt")
