@@ -33,32 +33,24 @@ func(s *SetImp) AddFile(fname string, t TargetFactory) (string, os.Error) {
 }
 
 func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
-	//essentially the same as AddFile, except that instead of reading from
-	//a document, we're reading from a string (that is basically the document)...
+	split := strings.SplitAfter(doc, "\n", 0)
 	
-	//we may as well just read the entire document into a string in AddFile
-	//and then just pass that into this function.
-	
-	return whatever, nil
+	return s.Add(split, t)
 }
 
 func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
-	//again, essentially the same as the line above, except that I think
-	//this is the one where we'll actually do something.
-	
-	//we should parse each line, where the first value is the name of the new
-	//target, and each following value is the name of a prerequisite.
-	
-	//we can then call the Put method for that target.
-	
-	//one thing to consider is that we may be putting targets in before their
-	//prerequisites. I think that's what he means by merge, so that we put in
-	//that prereq first with no dependencies, and then later, when we find it
-	//in the document, we merge it with its existing target. (hence the Merge
-	//method on Target)
-	
-	//btw, don't think i'm writing these comments in here to be a dick. it's
-	//more for me than you. I know you know how to code. :)
+	var first string
+	for y := 0; y < len(lines); y++ {
+		if strings.Index(lines[y], "\t" != 0 {
+			targ, err := t(s, lines[y:y+1], t)
+			if err == nil {
+				str, nerr := s.Put(t)
+				if nerr != nil { return _, nerr }
+				else if y == 0 { first = str }
+			} else { return _, err }
+		}
+	}
+	return first, _
 }
 
 func(s *SetImp) Put(t Target) (string, os.Error) {
