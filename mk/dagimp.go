@@ -1,3 +1,9 @@
+/*
+dagimp implements all of the dag.go interfaces to build the directed acyclic 
+graph that governs the command order of a makefile.
+
+Authors: William Broza, Tym Lipari
+*/
 package dag
 
 import 	("os"
@@ -7,20 +13,31 @@ import 	("os"
 				//"strconv"
 )
 
+//SetImp 
+//Implements the map
 type SetImp struct {
 	setmap map[string]Target
 }
 
+//Get(name string)
+//returns the name in setmap
+//returns: Target
 func(s *SetImp) Get(name string) Target {
 	return s.setmap[name]
 }
 
+//Apply(t Target, a Action)
+//applys action to target
+//returns: error
 func(s *SetImp) Apply(t Target, a Action) os.Error {
 	if err := t.ApplyPreq(a); err != nil { return err }
 	if err := t.Apply(a); err != nil { return err }
 	return nil
 }
 
+//AddFile(fname string, t TargetFactory)
+//adds file to target factory
+//returns: string and error
 func(s *SetImp) AddFile(fname string, t TargetFactory) (string, os.Error) {
 
 	//probably wrong
@@ -34,16 +51,22 @@ func(s *SetImp) AddFile(fname string, t TargetFactory) (string, os.Error) {
 	return s.AddString(str, t)
 }
 
+//AddString(doc string, t TargetFactory)
+//adds string to target factory
+//returns: string and error
 func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
 	split := strings.SplitAfter(doc, "\n", 0)
 	
 	return s.Add(split, t)
 }
 
+//Add(lines []string, t TargetFactory)
+//adds elements to targ
+//returns: string and error
 func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 	var first string
 	for y := 0; y < len(lines); y++ {
-		if strings.Index(lines[y], "\t") != 0 && strings.Index(lines[y], " ") != 0 && strings.Index(lines[y], "\n") != 0 {
+		if strings.Index(lines[y], "\t") != 0 && strings.Index(lines[y], " ") != 0 && strings.Index(lines[y], "\n") != 0 && len(lines[y]) > 0{
 			targ, err := t(s, lines[y:y+1], t)
 			if err == nil {
 				str, nerr := s.Put(targ)
@@ -57,6 +80,9 @@ func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 	return first, nil
 }
 
+//Put(t Target)
+//puts target in SetImp
+//returns: target and error
 func(s *SetImp) Put(t Target) (Target, os.Error) {
 	fromMap := s.Get(t.Name())
 	if fromMap != nil {
@@ -66,6 +92,9 @@ func(s *SetImp) Put(t Target) (Target, os.Error) {
 	return s.Get(t.Name()), nil
 }
 
+//String()
+//returns string from SetImp
+//returns: string
 func(s *SetImp) String() string {
 	var toReturn string
 	for f, g := range s.setmap {
@@ -74,6 +103,7 @@ func(s *SetImp) String() string {
 	return toReturn
 }		
 
+//NewSet()
 //Returns a new SetImp
 func NewSet() Set {
 	n := new(SetImp)
@@ -81,6 +111,7 @@ func NewSet() Set {
 	return n
 }
 
+//TargImp Struct
 type TargImp struct {
 	name string
 	dependencies []string
@@ -89,6 +120,9 @@ type TargImp struct {
 	commandSent bool
 }
 
+//isDependent(depend string)
+//tells if dependant
+//returns: bool of dependance
 func(t *TargImp) isDependent(depend string) bool {
 	for _, y := range t.dependencies {
 		if y == depend { return true }
@@ -96,6 +130,9 @@ func(t *TargImp) isDependent(depend string) bool {
 	return false
 }
 
+//ApplyPreq(a Action)
+//Applys prereq to target
+//returns: error
 func(t *TargImp) ApplyPreq(a Action) os.Error {
 	for y := 0; y < t.dependlen; y++ {
 		var targ Target
@@ -119,10 +156,16 @@ func(t *TargImp) ApplyPreq(a Action) os.Error {
 	return nil
 }
 
+//Name()
+//returns name for the target
+//returns: string Name
 func(t *TargImp) Name() string {
 	return t.name
 }
 
+//String()
+//returns string for Target
+//returns: string
 func(t *TargImp) String() string {
 	var toReturn string = t.Name() + ":\t"
 	for _, y := range t.dependencies {
@@ -131,6 +174,9 @@ func(t *TargImp) String() string {
 	return toReturn
 }
 
+//Merge(other Target)
+//merges targets
+//returns: error
 func(t *TargImp) Merge(other Target) (Target, os.Error) {
 	x := other.(*TargImp)
 	if x.Name() != t.Name() {
@@ -147,6 +193,9 @@ func(t *TargImp) Merge(other Target) (Target, os.Error) {
 	return t, nil
 }
 
+//Apply(a Action)
+//applys action to TargImp
+//returns: error
 func(t *TargImp) Apply(a Action) os.Error {
 	if !t.commandSent {
 		t.commandSent = true
@@ -155,6 +204,9 @@ func(t *TargImp) Apply(a Action) os.Error {
 	return nil
 }
 
+//DagTargetFact(s Set, str []string, t TargetFactory)
+//target factory for dag implementation
+//returns: error
 func DagTargetFact(s Set, str []string, t TargetFactory) (Target, os.Error) {
 		targ := new(TargImp)
 		
