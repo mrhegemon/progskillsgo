@@ -1,11 +1,14 @@
-import ("dag"; "flag")
+package main
+
+import ("dag"; "flag"; "os"; "fmt")
 
 func main() {
 	flag.Parse()
-	//targetFact := [some code here]
-	//action := func(t Target) os.Error {
-		//fmt.Println(t.Name())
-	//}
+	targetFact := dag.DagTargetFact
+	action := func(t dag.Target) os.Error {
+		_, err := fmt.Println(t.Name())
+		return err
+	}
 
 	dag.Main(targetFact, action)
 }

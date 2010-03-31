@@ -1,13 +1,17 @@
 package dag
 
-import "os"
+import 	("os"
+				"io/ioutil"
+				"bytes"
+				"strings"
+)
 
 type SetImp struct {
 	setmap map[string]Target
 }
 
 func(s *SetImp) Get(name string) Target {
-	return setmap[name]
+	return s.setmap[name]
 }
 
 func(s *SetImp) Apply(t Target, a Action) os.Error {
@@ -17,12 +21,16 @@ func(s *SetImp) Apply(t Target, a Action) os.Error {
 }
 
 func(s *SetImp) AddFile(fname string, t TargetFactory) (string, os.Error) {
-	file, err := os.Open(fname, os.O_RDONLY, 444)
-	if err != nil { return _, err }
 
-		file
-
-	return AddString(str, t)
+	//probably wrong
+	//file, err := os.Open(fname, os.O_RDONLY, 444)
+	
+	fileByteS, err := ioutil.ReadFile(fname) // may be ReadAll
+	if err != nil { return  "" , err }
+	
+	str := bytes.NewBuffer(fileByteS).String()
+	
+	return s.AddString(str, t)
 }
 
 func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
@@ -34,25 +42,27 @@ func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
 func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 	var first string
 	for y := 0; y < len(lines); y++ {
-		if strings.Index(lines[y], "\t" != 0 {
+		if strings.Index(lines[y], "\t") != 0 {
 			targ, err := t(s, lines[y:y+1], t)
 			if err == nil {
-				str, nerr := s.Put(t)
-				if nerr != nil { return _, nerr }
-				else if y == 0 { first = str }
-			} else { return _, err }
+				str, nerr := s.Put(targ)
+				if nerr != nil { return "", nerr 
+				} else if (y == 0) {
+					first = str.Name() 
+				}
+			} else { return "", err }
 		}
 	}
-	return first, _
+	return first, nil
 }
 
-func(s *SetImp) Put(t Target) (string, os.Error) {
-	fromMap := s.Get(t.Name)
+func(s *SetImp) Put(t Target) (Target, os.Error) {
+	fromMap := s.Get(t.Name())
 	if fromMap != nil {
 		fromMap.Merge(t)
-	} else { s.setmap[t.Name] = t }
+	} else { s.setmap[t.Name()] = t }
 	
-	return s.Get(t.Name), _
+	return s.Get(t.Name()), nil
 }
 
 func(s *SetImp) String() string {
@@ -71,9 +81,9 @@ func NewSet() Set {
 }
 
 type TargImp struct {
-	var name string
-	var dependencies []string
-	var dagset Set
+	name string
+	dependencies []string
+	dagset Set
 }
 
 func(t *TargImp) isDependent(depend string) bool {
@@ -85,9 +95,9 @@ func(t *TargImp) isDependent(depend string) bool {
 
 func(t *TargImp) ApplyPreq(a Action) os.Error {
 	for _, y := range t.dependencies {
-		targ := dagset.Get(y)
+		targ := t.dagset.Get(y)
 		//if the target doesn't exist, send an error
-		if targ:= dagset.Get(y)targ == nil { 
+		if targ := t.dagset.Get(y); targ == nil { 
 			return os.NewError("non-existant Target:  " + y) 
 		}
 		
@@ -105,12 +115,12 @@ func(t *TargImp) ApplyPreq(a Action) os.Error {
 }
 
 func(t *TargImp) Name() string {
-	return t.Name
+	return t.name
 }
 
 func(t *TargImp) String() string {
 	var toReturn string = t.Name() + ":\t"
-	for _, y := dependencies {
+	for _, y := range t.dependencies {
 		toReturn += y + "  "
 	}
 	return toReturn
@@ -119,18 +129,30 @@ func(t *TargImp) String() string {
 func(t *TargImp) Merge(other Target) (Target, os.Error) {
 	x := other.(*TargImp)
 	if x.Name() != t.Name() {
-		return os.NewError("cannot merge targets with different names")
+		return nil, os.NewError("cannot merge targets with different names")
 	}
 	
-	for _, y := range other.dependencies {
+	for _, y := range other.(*TargImp).dependencies {
 		if !t.isDependent(y) {
 			t.dependencies[len(t.dependencies)] = y
 		}
 	}
 	
-	return t, _
+	return t, nil
 }
 
 func(t *TargImp) Apply(a Action) os.Error {
 	return a(t)
+}
+
+func DagTargetFact(s Set, str []string, t TargetFactory) (Target, os.Error) {
+		targ := new(TargImp)
+		
+		tokens := strings.Fields(str[0])
+		
+		targ.name = tokens[0]
+		targ.dependencies = tokens[1:]
+		targ.dagset = s
+		
+		return targ, nil
 }
