@@ -43,7 +43,7 @@ func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
 func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 	var first string
 	for y := 0; y < len(lines); y++ {
-		if strings.Index(lines[y], "\t") != 0 && len(lines[y]) > 0 {
+		if strings.Index(lines[y], "\t") != 0 && strings.Index(lines[y], " ") != 0 && strings.Index(lines[y], "\n") != 0 {
 			targ, err := t(s, lines[y:y+1], t)
 			if err == nil {
 				str, nerr := s.Put(targ)
@@ -85,6 +85,8 @@ type TargImp struct {
 	name string
 	dependencies []string
 	dagset Set
+	dependlen int
+	commandSent bool
 }
 
 func(t *TargImp) isDependent(depend string) bool {
@@ -95,22 +97,22 @@ func(t *TargImp) isDependent(depend string) bool {
 }
 
 func(t *TargImp) ApplyPreq(a Action) os.Error {
-	for _, y := range t.dependencies {
+	for y := 0; y < t.dependlen; y++ {
 		var targ Target
 		//if the target doesn't exist, send an error
-		if targ = t.dagset.Get(y); targ == nil { 
-			return os.NewError("non-existant Target:  " + y) 
+		if targ = t.dagset.Get(t.dependencies[y]); targ == nil { 
+			return os.NewError("non-existant Target:  " + t.dependencies[y]) 
 		}
 		
 		//if the targets prereqs sent an error, send it on
 		if err1 := targ.ApplyPreq(a); err1 != nil {
-			println(err1.String())
+			//println(err1.String())
 			return err1
 		}
 		
 		//if the target sent an error, send it on
 		if err2 := targ.Apply(a); err2 != nil {
-			println(err2.String())
+			//println(err2.String())
 			return err2
 		}
 	}
@@ -131,15 +133,14 @@ func(t *TargImp) String() string {
 
 func(t *TargImp) Merge(other Target) (Target, os.Error) {
 	x := other.(*TargImp)
-	println("CURRENT:  " + t.String())
-	println("OTHER:  " + other.String())
 	if x.Name() != t.Name() {
 		return nil, os.NewError("cannot merge targets with different names")
 	}
 	
-	for _, y := range other.(*TargImp).dependencies {
-		if !t.isDependent(y) {
-			t.dependencies[len(t.dependencies)] = y
+	for y := 0; y < x.dependlen; y++ {
+		if !t.isDependent(x.dependencies[y]) {
+			t.dependencies[t.dependlen] = x.dependencies[y]
+			t.dependlen++
 		}
 	}
 	
@@ -147,7 +148,11 @@ func(t *TargImp) Merge(other Target) (Target, os.Error) {
 }
 
 func(t *TargImp) Apply(a Action) os.Error {
-	return a(t)
+	if !t.commandSent {
+		t.commandSent = true
+		return a(t)
+	}
+	return nil
 }
 
 func DagTargetFact(s Set, str []string, t TargetFactory) (Target, os.Error) {
@@ -156,15 +161,18 @@ func DagTargetFact(s Set, str []string, t TargetFactory) (Target, os.Error) {
 		tokens := strings.Fields(str[0])
 		
 		targ.name = tokens[0]
-		targ.dependencies = make([]string, 20)
-		copy(targ.dependencies, tokens[1:])
+		targ.dependencies = make([]string,	20, 20)
+		targ.dependlen = copy(targ.dependencies, tokens[1:])
 		targ.dagset = s
 		
-		for _, y := range targ.dependencies {
-			if s.Get(y) == nil {
-				temp := []string { y }
+		//println(targ.String())
+		
+		//println(strconv.Itoa(len(targ.dependencies)))
+		
+		for y := 0; y < targ.dependlen; y++  {
+			if s.Get(targ.dependencies[y]) == nil {
+				temp := []string { targ.dependencies[y] }
 				
-				for _, xyz := range temp { println(xyz) }
 				tempTarg, nerr := t(s, temp, t)
 				if nerr != nil { return nil, nerr }
 				
