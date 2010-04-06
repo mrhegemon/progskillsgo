@@ -4,6 +4,9 @@ graph that governs the command order of a makefile.
 
 Authors: William Broza, Tym Lipari
 */
+
+//THIS SHOULD BE THE CORRECT REVISION
+//call me if it doesnt work
 package dag
 
 import 	("os"
@@ -65,10 +68,9 @@ func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
 //returns: string and error
 func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 	var first string
-	var begin int
 	for y := 0; y < len(lines); y++ {
 		if strings.Index(lines[y], "\t") != 0 && strings.Index(lines[y], " ") != 0 && strings.Index(lines[y], "\n") != 0 && len(lines[y]) > 0{
-			targ, err := t(s, lines[begin:y], t)
+			targ, err := t(s, lines[y:y+1], t)
 			if err == nil {
 				str, nerr := s.Put(targ)
 				if nerr != nil { return "", nerr 
@@ -76,7 +78,6 @@ func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 					first = str.Name() 
 				}
 			} else { return "", err }
-			begin = y;
 		}
 	}
 	return first, nil
@@ -120,7 +121,6 @@ type TargImp struct {
 	dagset Set
 	dependlen int
 	commandSent bool
-	cyclic bool
 }
 
 //isDependent(depend string)
@@ -144,21 +144,17 @@ func(t *TargImp) ApplyPreq(a Action) os.Error {
 			return os.NewError("non-existant Target:  " + t.dependencies[y]) 
 		}
 		
-		if t.cyclic { return os.NewError("Target " + t.Name() + "  is cyclic.") }
-		
-		t.cyclic = true
 		//if the targets prereqs sent an error, send it on
 		if err1 := targ.ApplyPreq(a); err1 != nil {
 			//println(err1.String())
 			return err1
 		}
-		t.cyclic = false
 		
 		//if the target sent an error, send it on
-		/*if err2 := targ.Apply(a); err2 != nil {
+		if err2 := targ.Apply(a); err2 != nil {
 			//println(err2.String())
 			return err2
-		}*/
+		}
 	}
 	return nil
 }
