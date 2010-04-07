@@ -33,6 +33,7 @@ func(s *SetImp) Get(name string) Target {
 //applys action to target
 //returns: error
 func(s *SetImp) Apply(t Target, a Action) os.Error {
+	println(s.String())
 	if err := t.ApplyPreq(a); err != nil { return err }
 	if err := t.Apply(a); err != nil { return err }
 	return nil
@@ -68,16 +69,27 @@ func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
 //returns: string and error
 func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 	var first string
+	var begin int
+	printer := func(s []string) {
+		for y:= 0; y < len(s); y++ {
+			//println("[" + strconv.Itoa(y) + "] = " + s[y])
+		}
+	}
 	for y := 0; y < len(lines); y++ {
 		if strings.Index(lines[y], "\t") != 0 && strings.Index(lines[y], " ") != 0 && strings.Index(lines[y], "\n") != 0 && len(lines[y]) > 0{
-			targ, err := t(s, lines[y:y+1], t)
-			if err == nil {
-				str, nerr := s.Put(targ)
-				if nerr != nil { return "", nerr 
-				} else if (y == 0) {
-					first = str.Name() 
-				}
-			} else { return "", err }
+			if y != 0 {
+				printer(lines[begin:y])
+				//println("")
+				targ, err := t(s, lines[begin:y], t)
+				if err == nil {
+					str, nerr := s.Put(targ)
+					if nerr != nil { return "", nerr 
+					} else if (y == 0) {
+						first = str.Name() 
+					}
+				} else { return "", err }
+			}
+			begin = y
 		}
 	}
 	return first, nil
