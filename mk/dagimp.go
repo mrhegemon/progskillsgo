@@ -121,6 +121,7 @@ type TargImp struct {
 	dagset Set
 	dependlen int
 	commandSent bool
+	cyclic bool
 }
 
 //isDependent(depend string)
@@ -144,11 +145,15 @@ func(t *TargImp) ApplyPreq(a Action) os.Error {
 			return os.NewError("non-existant Target:  " + t.dependencies[y]) 
 		}
 		
+		if t.cyclic { return os.NewError("Target " + t.Name() + ":  cyclic") }
+
+		t.cyclic = true
 		//if the targets prereqs sent an error, send it on
 		if err1 := targ.ApplyPreq(a); err1 != nil {
 			//println(err1.String())
 			return err1
 		}
+		t.cyclic = false
 		
 		//if the target sent an error, send it on
 		if err2 := targ.Apply(a); err2 != nil {

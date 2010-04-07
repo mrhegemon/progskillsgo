@@ -16,5 +16,7 @@ func main() {
 		return err
 	}
 
-	dag.Main(targetFact, action)
+	if err := dag.Main(targetFact, action); err != nil {
+		fmt.Println("\n" + err.String())
+	}
 }
