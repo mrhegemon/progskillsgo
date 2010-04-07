@@ -1,4 +1,3 @@
-
 cmds = dag
 pkg = dag
 g = dag.go dagimp.go 

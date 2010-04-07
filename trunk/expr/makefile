@@ -1,4 +1,5 @@
 cmd = expr
+
 include $(GOROOT)/src/Make.$(GOARCH)
 
 all: $O/$(cmd)

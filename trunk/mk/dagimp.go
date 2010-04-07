@@ -5,15 +5,12 @@ graph that governs the command order of a makefile.
 Authors: William Broza, Tym Lipari
 */
 
-//THIS SHOULD BE THE CORRECT REVISION
-//call me if it doesnt work
 package dag
 
 import 	("os"
 				"io/ioutil"
 				"bytes"
 				"strings"
-				//"strconv"
 )
 
 //SetImp 
@@ -44,9 +41,6 @@ func(s *SetImp) Apply(t Target, a Action) os.Error {
 //returns: string and error
 func(s *SetImp) AddFile(fname string, t TargetFactory) (string, os.Error) {
 
-	//probably wrong
-	//file, err := os.Open(fname, os.O_RDONLY, 444)
-	
 	fileByteS, err := ioutil.ReadFile(fname) // may be ReadAll
 	if err != nil { return  "" , err }
 	
@@ -72,14 +66,12 @@ func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
 	var begin int
 	printer := func(s []string) {
 		for y:= 0; y < len(s); y++ {
-			//println("[" + strconv.Itoa(y) + "] = " + s[y])
 		}
 	}
 	for y := 0; y < len(lines); y++ {
 		if strings.Index(lines[y], "\t") != 0 && strings.Index(lines[y], " ") != 0 && strings.Index(lines[y], "\n") != 0 && len(lines[y]) > 0{
 			if y != 0 {
 				printer(lines[begin:y])
-				//println("")
 				targ, err := t(s, lines[begin:y], t)
 				if err == nil {
 					str, nerr := s.Put(targ)
@@ -162,14 +154,12 @@ func(t *TargImp) ApplyPreq(a Action) os.Error {
 		t.cyclic = true
 		//if the targets prereqs sent an error, send it on
 		if err1 := targ.ApplyPreq(a); err1 != nil {
-			//println(err1.String())
 			return err1
 		}
 		t.cyclic = false
 		
 		//if the target sent an error, send it on
 		if err2 := targ.Apply(a); err2 != nil {
-			//println(err2.String())
 			return err2
 		}
 	}
@@ -236,10 +226,6 @@ func DagTargetFact(s Set, str []string, t TargetFactory) (Target, os.Error) {
 		targ.dependencies = make([]string,	20, 20)
 		targ.dependlen = copy(targ.dependencies, tokens[1:])
 		targ.dagset = s
-		
-		//println(targ.String())
-		
-		//println(strconv.Itoa(len(targ.dependencies)))
 		
 		for y := 0; y < targ.dependlen; y++  {
 			if s.Get(targ.dependencies[y]) == nil {
