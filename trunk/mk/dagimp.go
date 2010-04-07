@@ -8,9 +8,9 @@ Authors: William Broza, Tym Lipari
 package dag
 
 import 	("os"
-				"io/ioutil"
-				"bytes"
-				"strings"
+		 "io/ioutil"
+		 "bytes"
+		 "strings"
 )
 
 //SetImp 
@@ -30,7 +30,6 @@ func(s *SetImp) Get(name string) Target {
 //applys action to target
 //returns: error
 func(s *SetImp) Apply(t Target, a Action) os.Error {
-	println(s.String())
 	if err := t.ApplyPreq(a); err != nil { return err }
 	if err := t.Apply(a); err != nil { return err }
 	return nil
@@ -54,7 +53,6 @@ func(s *SetImp) AddFile(fname string, t TargetFactory) (string, os.Error) {
 //returns: string and error
 func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
 	split := strings.SplitAfter(doc, "\n", 0)
-	
 	return s.Add(split, t)
 }
 
@@ -62,17 +60,41 @@ func(s *SetImp) AddString(doc string, t TargetFactory) (string, os.Error) {
 //adds elements to targ
 //returns: string and error
 func(s *SetImp) Add(lines []string, t TargetFactory) (string, os.Error) {
-	var first string
-	var begin int
-	printer := func(s []string) {
-		for y:= 0; y < len(s); y++ {
+	/*var first string
+	var begin int = -1
+	
+	for loc, val := range lines {
+		//if the line is a target...
+		if strings.Index(val, "\t") != 0 && strings.Index(val, " ") != 0 && strings.Index(val, "\n") != 0 && len(val) > 0 {
+			if begin > -1 || loc == len(lines) - 1 {
+				targ, err := t(s, lines[begin:loc], t)
+				if err == nil {
+					str, nerr := s.Put(targ)
+					if nerr != nil { return "", nerr }
+					
+					if first == "" { first = str.Name() }
+				} else { return "", err }
+			}
+			begin = loc
 		}
 	}
+	return first, nil*/
+
+	var first string
+	var begin int = -1
+	/*printer := func(s []string) {
+		for y:= 0; y < len(s); y++ {
+		}
+	}*/
 	for y := 0; y < len(lines); y++ {
-		if strings.Index(lines[y], "\t") != 0 && strings.Index(lines[y], " ") != 0 && strings.Index(lines[y], "\n") != 0 && len(lines[y]) > 0{
-			if y != 0 {
-				printer(lines[begin:y])
+		if strings.Index(lines[y], "\t") != 0 && strings.Index(lines[y], " ") != 0 && strings.Index(lines[y], "\n") != 0 {
+			if begin > -1 || y == len(lines) - 1 {
+				//printer(lines[begin:y])
 				targ, err := t(s, lines[begin:y], t)
+				if y == len(lines) - 1 { targ, err = t(s, lines[begin:y+1], t) }
+				
+				if first == "" { first = targ.Name() }
+				
 				if err == nil {
 					str, nerr := s.Put(targ)
 					if nerr != nil { return "", nerr 
@@ -207,6 +229,7 @@ func(t *TargImp) Merge(other Target) (Target, os.Error) {
 //applys action to TargImp
 //returns: error
 func(t *TargImp) Apply(a Action) os.Error {
+
 	if !t.commandSent {
 		t.commandSent = true
 		return a(t)

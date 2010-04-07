@@ -5,40 +5,37 @@ graph that governs the command order of a makefile.
 
 Authors: William Broza, Tym Lipari
 */
-package dag
+package mk
 
 import 	("os"
-				"io/ioutil"
-				"bytes"
-				"strings"
+		 "dag"
+		 "strings"
 )
 
 //structure makeTarget
-type makeTarget struct{
-	Name string
-	tgIm dagimp.TargImp
+type MakeTarget struct{
+	dag.TargImp
 	//slice of strings
-	dependencies []string
+	commands []string
 }
 
-//functs for makeTarget
-
-func(t *makeTarget) isDependent(depend string) bool {
-	for _, y := range t.dependencies {
-		if y == depend { return true }
+func (t *MakeTarget) Commands() string {
+	temp := ""
+	for _, y := range t.commands {
+		temp += y + "\n"
 	}
-	return false
+	return temp
 }
 
 //MkTargetFact(s Set, str []string, t TargetFactory)
 //target factory for mk implementation
 //returns: error
 func MkTargetFact(s Set, str []string, t TargetFactory) (Target, os.Error) {
-		targ := new(TargImp)
+		targ := new(MakeTarget)
 		
 		tokens := strings.Fields(str[0])
 		
-/*
+
 		targ.name = tokens[0]
 		targ.dependencies = make([]string,	20, 20)
 		targ.dependlen = copy(targ.dependencies, tokens[1:])
@@ -55,6 +52,28 @@ func MkTargetFact(s Set, str []string, t TargetFactory) (Target, os.Error) {
 				if nerr2 != nil { return tempTarg, nerr2 }
 			}
 		}
+		
+		targ.commands = str[1:]
 		return targ, nil
-*/
 }
+
+func Act(targ dag.Target) os.Error {
+	t := targ.(MakeTarget)
+	age := os.Dir.Stat(t.Name()).Mtime_ns
+	
+	printCommands := false
+	for n, y := range t.dependencies {
+		preqAge := os.Dir.Stat(y).Mtime_ns
+		
+		if age < preqAge { printCommands = true; break }
+	}
+	
+	if printCommands {
+		for _, y := range t.commands {
+			fmt.Println(y)
+		}
+	}
+	
+	return nil
+}
+			
