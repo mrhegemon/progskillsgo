@@ -11,7 +11,6 @@ import 	("os"
 		 "dag"
 		 "strings"
 		 "fmt"
-		 //"strconv"
 )
 
 //structure makeTarget
@@ -43,15 +42,6 @@ func (t *MakeTarget) Commands() string {
 //target factory for mk implementation
 //returns: error
 func MkTargetFact(s dag.Set, str []string, t dag.TargetFactory) (dag.Target, os.Error) {
-		/*printer := func(s []string) {
-			for x, y := range s {
-				println("[" + strconv.Itoa(x) + "]  =  " + y)
-			}
-		}*/
-		
-		//printer(str)
-
-		//println("TARGFACT 0:  " + strconv.Itoa(len(str[0])) + "   \"" + str[0] + "\"")
 		targ := new(MakeTarget)
 		
 		tokens := strings.Fields(str[0])
@@ -77,7 +67,7 @@ func MkTargetFact(s dag.Set, str []string, t dag.TargetFactory) (dag.Target, os.
 		}
 		
 		targ.commands = str[1:]
-		//println("TARG RETURNED:  \"" + targ.Name() + "\"")
+		
 		return targ, nil
 }
 //Merge(other Target)
