@@ -17,5 +17,7 @@ dag can take in a makefile or a list of file names
 
 mk can take in a makefile or a list of file names
 
+NOTE: poor man's inheritance did not work for mk.go!
+
 */
 package documentation
