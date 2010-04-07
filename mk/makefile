@@ -1,6 +1,22 @@
-cmds = dag
-pkg = dag
-g = dag.go dagimp.go 
+all:		6 6/dag 6/mk
 
-include $(GOROOT)/src/Make.$(GOARCH)
-include Make.pkg
+clean:
+	rm -rf [568vq] *.[568vq]
+	
+6:
+	mkdir 6
+
+6/dag:	6 dagmain.6 dag.6
+	6l -o 6/dag -L . dagmain.6
+	
+dag.6:	dag.go dagimp.go
+	6g -o dag.6 dag.go dagimp.go
+
+dagmain.6:	dagmain.go dag.6
+	6g -I . dagmain.go
+
+6/mk:	6 mkmain.6 dag.6 mk.6
+	6l -o 6/mk -L . mkmain.6
+
+mkmain.6:	mkmain.go dag.6 mk.6
+	6g -I . mkmain.go
