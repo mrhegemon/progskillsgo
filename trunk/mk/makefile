@@ -17,6 +17,9 @@ dagmain.6:	dagmain.go dag.6
 
 6/mk:	6 mkmain.6 dag.6 mk.6
 	6l -o 6/mk -L . mkmain.6
+	
+mk.6:
+	6g -I . mk.go
 
 mkmain.6:	mkmain.go dag.6 mk.6
 	6g -I . mkmain.go
