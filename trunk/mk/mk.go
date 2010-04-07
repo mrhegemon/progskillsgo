@@ -31,7 +31,7 @@ type MakeTarget struct{
 func (t *MakeTarget) Commands() string {
 	temp := ""
 	for _, y := range t.commands {
-		if strings.Index(y, "\n") != 0 {
+		if strings.Index(strings.TrimSpace(y), "\n") != 0 {
 			temp += strings.TrimSpace(y) + "\n"
 		}
 	}
@@ -45,9 +45,6 @@ func MkTargetFact(s dag.Set, str []string, t dag.TargetFactory) (dag.Target, os.
 		targ := new(MakeTarget)
 		
 		tokens := strings.Fields(str[0])
-		
-		//printer(tokens)
-		
 
 		targ.name = tokens[0]
 		targ.dependencies = make([]string,	20, 20)
@@ -70,6 +67,7 @@ func MkTargetFact(s dag.Set, str []string, t dag.TargetFactory) (dag.Target, os.
 		
 		return targ, nil
 }
+
 //Merge(other Target)
 //merges targets
 //returns: error
@@ -89,6 +87,7 @@ func(t *MakeTarget) Merge(other dag.Target) (dag.Target, os.Error) {
 	t.commands = other.(*MakeTarget).commands
 	return t, nil
 }
+
 //isDependent(depend string)
 //tells if dependant
 //returns: bool of dependance
@@ -98,9 +97,13 @@ func(t *MakeTarget) isDependent(depend string) bool {
 	}
 	return false
 }
+
+//Name()
+//returns: name of target
 func(t *MakeTarget) Name() string {
 	return t.name
 }
+
 //Apply(a Action)
 //applys action to TargImp
 //returns: error
@@ -140,6 +143,10 @@ func(t *MakeTarget) ApplyPreq(a dag.Action) os.Error {
 	}
 	return nil
 }
+
+//Act(targ dag.Target)
+//performes actions built by dag
+//returns: error
 func Act(targ dag.Target) os.Error {
 	t := targ.(*MakeTarget)
 	
@@ -172,4 +179,3 @@ func Act(targ dag.Target) os.Error {
 	
 	return nil
 }
-			
