@@ -8,7 +8,7 @@ usage:
 	matrix [arg1] ... [argn]
 */
 
-package main
+package matrix
 
 import ("fmt"; "os"; "strconv"; "flag"; "container/vector")
 
@@ -17,12 +17,31 @@ const( PLUS = "+"
        TIMES = "*"
      )
 
-//program main
-func main(){
-//?
+// Implements a Matrix.
+type Matrix struct {
+		x int
+		y int
+		mtx []*Vector
 }
 
-func add(matrix A, matrix B) {
+func(m *Matrix) build(int x, int y) {
+	m.x = x
+	m.y = y
+	m.mtx = make([] *Vector, x)
+
+	for _, a := range m.mtx {
+		a = new(Vector)
+		for b := 0; b < y; b++{
+			a.Push(0);
+	}
+}
+
+func (m *matrix) set(int x, int y, float v) {
+	
+
+}
+
+func add(matrix A, matrix B) (matrix C) {
 /*
 double matsum[5][5];
 int row, col;
