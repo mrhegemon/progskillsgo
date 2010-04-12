@@ -5,7 +5,8 @@ Arithmetic Expression Interpreter
 expr evaluates expressions simular to the unix command shell
 
 usage:
-	expr [arg1] ... [argn] */
+	expr [arg1] ... [argn]
+*/
 package main
 
 import ("fmt"; "os"; "strconv"; "flag"; "container/vector")
