@@ -39,8 +39,7 @@ func (m *atrix) get(int x, int y) float {
 
 func add(atrix A, atrix B) (atrix, os.Error) {
 	if (A.x != B.x || A.y != B.y) {
-		os.Error err
-		return _, err
+		return nil, os.NewError("Matrixes not same dimensions")
 	}
 
 	atrix rm;
