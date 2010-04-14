@@ -1,0 +1,10 @@
+This package contains matrix.go and main.go
+
+Authors: William Broza, Tym Lipari
+
+matrix.go contains the package matrix for creating, adding, and multiplying
+matrices.
+
+main.go runs test cases to ensure that matrix.go funcitons properly.
+
+To run main.go, run make using makefile.  Then run main with no arguments.
