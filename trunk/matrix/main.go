@@ -30,8 +30,8 @@ func main() {
 
 	//TEST 1
 	fmt.Println("add test 1")
-	m1.BuildTestMatrix(10, 7, 24.68, 13.579)
-	m2.BuildTestMatrix(10, 7, 90.36, 179.2)
+	m1.BuildTestMatrix(10, 7, 4.68, 13.579)
+	m2.BuildTestMatrix(10, 7, 0.36, 0.20)
 	
 	m1.Print()
 	println("\n")
@@ -45,8 +45,8 @@ func main() {
 
 	//TEST 2
 	fmt.Println("mult test 1")
-	m3.BuildTestMatrix(4, 7, 24.068, 13.579)
-	m4.BuildTestMatrix(7, 11, 24.868, 13.579)
+	m3.BuildTestMatrix(4, 7, 4.068, 3.579)
+	m4.BuildTestMatrix(7, 11, 4.868, 3.579)
 
 	m3.Print()
 	println("\n")
@@ -60,8 +60,8 @@ func main() {
 
 	//TEST 3
 	fmt.Println("add test 2")
-	m5.BuildTestMatrix(5, 30, 24.65, 5.579)
-	m6.BuildTestMatrix(5, 30, 14.68, 153.54)
+	m5.BuildTestMatrix(5, 30, 4.65, 5.579)
+	m6.BuildTestMatrix(5, 30, 4.68, 3.54)
 	
 	m5.Print()
 	println("\n")
@@ -75,8 +75,8 @@ func main() {
 
 	//TEST 4
 	fmt.Println("mult test 2")
-	m7.BuildTestMatrix(2, 100, 234.68, 4390.02)
-	m8.BuildTestMatrix(100, 17, 4.68, 13579.04)
+	m7.BuildTestMatrix(2, 100, 4.68, 0.02)
+	m8.BuildTestMatrix(100, 17, 4.68, 9.04)
 
 	m7.Print()
 	println("\n")
@@ -90,8 +90,8 @@ func main() {
 
 	//TEST 5
 	fmt.Println("return add error")
-	m9.BuildTestMatrix(5, 31, 24.65, 5.579)
-	m10.BuildTestMatrix(5, 30, 14.68, 153.54)
+	m9.BuildTestMatrix(5, 31, 4.65, 5.579)
+	m10.BuildTestMatrix(5, 30, 4.68, 3.54)
 
 	m9.Print()
 	println("\n")

@@ -99,10 +99,10 @@ func Mult(A *Matrix, B *Matrix) (*Matrix, os.Error) {
 	for row := 0; row < A.GetRow(); row++ {
 		for col := 0; col < B.GetCol(); col++ {
     	result = 0.0
-     	for k := 0; k < B.GetCol(); k++ {
-      	result = result + A.Get(row, k)*B.Get(k, col)
+			for k := 0; k < A.GetCol(); k++ {
+				result = result + A.Get(row, k) * B.Get(k, col)
 			}
-			rm.Set(row, col, result)
+		rm.Set(row, col, result)
 		}
 	}
 	return rm, nil
@@ -129,16 +129,16 @@ func(m *Matrix) Print() os.Error {
 
 //builds a test matrix from two generation seeds
 //returns: os.Error error
-func (m *Matrix) BuildTestMatrix(x int, y int, genNum float, genNum2 float) *Matrix {
-	rm := new(Matrix)
-	rm.Build(x, y)
+func (m *Matrix) BuildTestMatrix(x int, y int, genNum float, genNum2 float){
+	//rm := new(Matrix)
+	m.Build(x, y)
 	for a := 0; a < x; a++ {
 		for b := 0; b < y; b++ {
-			rm.Set(a, b, genNum)
+			m.Set(a, b, genNum)
+			//should be rand.
 			genNum = (genNum2 * 1.23456789) / (2 /genNum)
 		}
 	}
-	return rm
 }
 
 
