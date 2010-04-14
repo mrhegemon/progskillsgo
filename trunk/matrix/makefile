@@ -1,4 +1,4 @@
-cmds = test
+cmds = main
 pkg = matrix
 g = matrix.go
 
