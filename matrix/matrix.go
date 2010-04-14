@@ -37,10 +37,10 @@ func(m *Matrix) Build(x int, y int) {
 	m.SetCol(y)
 	m.mtx = make([] *vector.Vector, x)
 
-	for _, a := range m.mtx {
-		a = new(vector.Vector)
+	for n, _ := range m.mtx {
+		m.mtx[n] = new(vector.Vector)
 		for b := 0; b < y; b++ {
-			a.Push(0)
+			m.mtx[n].Push(0)
 		}
 	}
 }
@@ -99,11 +99,12 @@ func(m *Matrix) Print() os.Error {
 		return os.NewError("Matrix is null")
 	} else {
 		for col := 0; col < m.GetCol(); col++ {
+			fmt.Print("| ")
 			for row := 0; row < m.GetRow();	row++ {
 				fmt.Print(m.Get(row, col))
-				//might already print a space
 				fmt.Print(" ")
-			}
+			}			
+				fmt.Print("|")
 		fmt.Println()
 		}
 	}
@@ -113,8 +114,8 @@ func(m *Matrix) Print() os.Error {
 func (m *Matrix) BuildTestMatrix(x int, y int, genNum float, genNum2 float) *Matrix {
 	rm := new(Matrix)
 	rm.Build(x, y)
-	for a := 0; a > x; a++ {
-		for b := 0; b > y; b++ {
+	for a := 0; a < x; a++ {
+		for b := 0; b < y; b++ {
 			rm.Set(a, b, genNum)
 			genNum = (genNum2 * 1.23456789) / (2 /genNum)
 		}
