@@ -11,14 +11,30 @@ import ("fmt"; "os"; "container/vector")
 
 // Implements a matrix.
 type matrix struct {
-		x int
-		y int
+		mrow int
+		mcol int
 		mtx []*Vector
 }
 
+func(m *matrix) getRow() int {
+	return m.mrow
+}
+
+func(m *matrix) getCol() int {
+	return m.mcol
+}
+
+func(m *matrix) setRow(int x) {
+	m.mrow = x
+}
+
+func(m *matrix) setCol(int y) int {
+	m.mcol = y
+}
+
 func(m *matrix) build(int x, int y) {
-	m.x = x
-	m.y = y
+	m.setRow(x)
+	m.setCol(y)
 	m.mtx = make([] *Vector, x)
 
 	for _, a := range m.mtx {
@@ -37,15 +53,15 @@ func (m *matrix) get(int x, int y) float {
 }
 
 func add(matrix A, matrix B) (matrix, os.Error) {
-	if (A.x != B.x || A.y != B.y) {
+	if (A.getRow() != B.getRow() || A.getCol() != B.getCol()) {
 		return nil, os.NewError("matrixes are not same dimensions")
 	}
 	matrix rm;
-	rm.build(B.x, A.y)
+	rm.build(B.getRow(), A.getCol())
 	float result = 0;
 
-	for int row = 0; row < B.x; row++ {
-		for int col = 0; col < A.y;	col++ {
+	for int row = 0; row < B.getRow(); row++ {
+		for int col = 0; col < A.getCol();	col++ {
 			result = A.get(row, col) + B.get(row, col)
 			rm.set(row, col, result) 
 		}
@@ -54,36 +70,20 @@ func add(matrix A, matrix B) (matrix, os.Error) {
 }
 
 func mult(matrix A, matrix B) (matrix, os.Error) {
-	if (B.x != A.y) {
+	if (B.getRow() != A.getCol()) {
 		return nil,  os.NewError("matrices are not the correct dimensions")
 	}
 	matrix rm;
-	rm.build(A.x, B.y)
+	rm.build(A.getRow(), B.getCol())
 	float result = 0;
 
-	for int row = 0; row < A.x; row++ {
-		for int col = 0; col < B.y; col++ {
+	for int row = 0; row < A.getRow(); row++ {
+		for int col = 0; col < B.getCol(); col++ {
     	result = 0
      	for int k = 0; k < B.y; k++) {
       	result = result + A.get(row, k)*B.get(k, col)
 			}
 			rm.set(row, col, result)
-		}
-	}
-	return rm, nil
-}
-
-func add(matrix A, matrix B) (matrix, os.Error) {
-	if (A.x != B.x || A.y != B.y) {
-		return nil, os.NewError("matrices are not same dimensions")
-	}
-	matrix rm;
-	rm.build(B.x, A.y)
-	float result = 0;
-	for int row = 0; row < B.x; row++ {
-		for int col = 0; col < A.y;	col++ {
-			result = A.get(row, col) + B.get(row, col)
-			rm.set(row, col, result) 
 		}
 	}
 	return rm, nil
