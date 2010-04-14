@@ -9,29 +9,36 @@ package matrix
 
 import ("fmt"; "os"; "container/vector")
 
-// Implements a Matrix.
+//Structure of a Matrix and its attributes.
 type Matrix struct {
 		mrow int
 		mcol int
 		mtx []*vector.Vector
 }
 
+//gets the row.
+//returns: int row
 func(m *Matrix) GetRow() int {
 	return m.mrow
 }
 
+//gets the column.
+//returns: int col
 func(m *Matrix) GetCol() int {
 	return m.mcol
 }
 
+//sets the row.
 func(m *Matrix) SetRow(x int) {
 	m.mrow = x
 }
 
+//sets the column.
 func(m *Matrix) SetCol(y int) {
 	m.mcol = y
 }
 
+//fills the slices of the matrix with vectors of length y
 func(m *Matrix) Build(x int, y int) {
 	m.SetRow(x)
 	m.SetCol(y)
@@ -45,14 +52,19 @@ func(m *Matrix) Build(x int, y int) {
 	}
 }
 
+//sets a cell x,y of the matrix with the value v
 func(m *Matrix) Set(x int, y int, v float) {
 	m.mtx[x].Set(y, v)
 }
 
+//gets the cell x,y of the matrix
+//returns: float value
 func(m *Matrix) Get(x int, y int) float {
 	return m.mtx[x].At(y).(float)
 }
 
+//adds two matrices
+//returns: Matrix result, os.Error error
 func Add(A *Matrix, B *Matrix) (*Matrix, os.Error) {
 	if A.GetRow() != B.GetRow() || A.GetCol() != B.GetCol() {
 
@@ -72,6 +84,8 @@ func Add(A *Matrix, B *Matrix) (*Matrix, os.Error) {
 	return rm, nil
 }
 
+//multiplys two matrices
+//returns: Matrix product, os.Error error
 func Mult(A *Matrix, B *Matrix) (*Matrix, os.Error) {
 	if (B.GetRow() != A.GetCol()) {
 		
@@ -94,6 +108,8 @@ func Mult(A *Matrix, B *Matrix) (*Matrix, os.Error) {
 	return rm, nil
 }
 
+//prints the matrix
+//returns os.Error error
 func(m *Matrix) Print() os.Error {
 	if m == nil {
 		return os.NewError("Matrix is null")
@@ -111,6 +127,8 @@ func(m *Matrix) Print() os.Error {
 	return nil
 }
 
+//builds a test matrix from two generation seeds
+//returns: os.Error error
 func (m *Matrix) BuildTestMatrix(x int, y int, genNum float, genNum2 float) *Matrix {
 	rm := new(Matrix)
 	rm.Build(x, y)

@@ -28,7 +28,6 @@ func main() {
 	m11 := new(matrix.Matrix)
 	m12 := new(matrix.Matrix)
 
-
 	//TEST 1
 	fmt.Println("add test 1")
 	m1.BuildTestMatrix(10, 7, 24.68, 13.579)
@@ -76,8 +75,8 @@ func main() {
 
 	//TEST 4
 	fmt.Println("mult test 2")
-	m7.BuildTestMatrix(2, 100, 234.68, 1390.0)
-	m8.BuildTestMatrix(100, 17, 4.68, 13579.0)
+	m7.BuildTestMatrix(2, 100, 234.68, 4390.02)
+	m8.BuildTestMatrix(100, 17, 4.68, 13579.04)
 
 	m7.Print()
 	println("\n")
@@ -106,8 +105,8 @@ func main() {
 
 	//TEST 6
 	fmt.Println("return mult error")
-	m11.BuildTestMatrix(2, 10, 234.68, 1390.0)
-	m12.BuildTestMatrix(100, 17, 4.68, 13579.0)
+	m11.BuildTestMatrix(2, 10, 234.68, 8790.20)
+	m12.BuildTestMatrix(100, 17, 4.68, 3579.450)
 	
 	m11.Print()
 	println("\n")
