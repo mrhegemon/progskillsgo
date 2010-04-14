@@ -1,6 +1,6 @@
-cmds = matrix test
+cmds = test
 pkg = matrix
-g = test.go matrix.go
+g = matrix.go
 
 include $(GOROOT)/src/Make.$(GOARCH)
 include Make.pkg
