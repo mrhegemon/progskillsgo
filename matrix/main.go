@@ -6,7 +6,7 @@ Matrix Testing program
 tests add and mult matrices
 
 usage:
-	test
+	matrix
 */
 package matrix
 
