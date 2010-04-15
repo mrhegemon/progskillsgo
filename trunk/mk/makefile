@@ -1,25 +1,32 @@
-all:		6 6/dag 6/mk
+include $(GOROOT)/src/Make.$(GOARCH)
+
+all:		$(O) $(O)/dag $(O)/mk
 
 clean:
 	rm -rf [568vq] *.[568vq]
 	
-6:
-	mkdir 6
+$(O):
+	mkdir $(O)
 
-6/dag:	6 dagmain.6 dag.6
-	6l -o 6/dag -L . dagmain.6
+$(O)/dag:	$(O) dagmain.$(O) dag.$(O)
+	$(O)l -o $(O)/dag -L . dagmain.$(O)
 	
-dag.6:	dag.go dagimp.go
-	6g -o dag.6 dag.go dagimp.go
+dag.$(O):	dag.go dagimp.go
+	$(O)g -o dag.$(O) dag.go dagimp.go
 
-dagmain.6:	dagmain.go dag.6
-	6g -I . dagmain.go
+dagmain.$(O):	dagmain.go dag.$(O)
+	$(O)g -I . dagmain.go
 
-6/mk:	6 mkmain.6 dag.6 mk.6
-	6l -o 6/mk -L . mkmain.6
+$(O)/mk:	$(O) mkmain.$(O) dag.$(O) mk.$(O)
+	$(O)l -o $(O)/mk -L . mkmain.$(O)
 	
-mk.6:
-	6g -I . mk.go
+mk.$(O):
+	$(O)g -I . mk.go
 
-mkmain.6:	mkmain.go dag.6 mk.6
-	6g -I . mkmain.go
+mkmain.$(O):	mkmain.go dag.$(O) mk.$(O)
+	$(O)g -I . mkmain.go
+
+test:
+	$(O)/mk
+	$(O)/mk clean
+	$(O)/mk dag.$(O)
