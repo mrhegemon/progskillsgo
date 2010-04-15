@@ -119,7 +119,22 @@ func(this *LinkedList) At(index int) {}interface, os.Error {
 
 	return nil, os.NewError("LinkedList:  Search Error")
 }
-
+func(this *LinkedList) ApplyToAllFromFront(action func({}interface, int)os.Error) os.Error {
+	tempNode := this.head
+	for y:=1; y < this.length; y++ {
+		err := action(tempNode.getValue(), y -1)
+		if err != nil { return err }
+	}
+	return nil
+}
+func(this *LinkedList) ApplyToAllFromBack(action func({}interface, int)os.Error) os.Error {
+	tempNode := this.tail
+	for y:=this.length - 2; y > 0; y-- {
+		err := action(tempNode.getValue(), y+1)
+		if err != nil { return err }
+	}
+	return nil
+}
 
 
 
