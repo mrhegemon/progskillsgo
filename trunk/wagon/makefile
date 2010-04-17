@@ -1,23 +1,31 @@
 include $(GOROOT)/src/Make.$(GOARCH)
 
-all:		$(O) $(O)/wagon
+all:		$(O) $(O)/wagon $(O)/list_tester
 
 clean:
 	rm -rf [568vq] *.[568vq]
+	rm *~
 	
 $(O):
 	mkdir $(O)
 
-$(O)/wagon:	$(O) list.a wagon.a wagonmain.$(O)
+$(O)/wagon:	$(O) list.$(O) wagon.$(O) wagonmain.$(O)
 	$(O)l -o $(O)/wagon -L . wagonmain.$(O)
 
-list.a:		list.go
-	$(O)g -o list.a list.go
+list.$(O):		list.go
+	$(O)g -o list.$(O) list.go
 
-wagon.a:	list.a wagon.go
-	$(O)g -o wagon.a -I . wagon.go
+wagon.$(O):	list.$(O) wagon.go
+	$(O)g -o wagon.$(O) -I . wagon.go
 
-wagonmain.$(O)	wagonmain.go list.a wagon.a
+wagonmain.$(O):	wagonmain.go list.$(O) wagon.$(O)
 	$(O)g -I . wagonmain.go
+
+$(O)/list_tester:   $(O) list.$(O) listTester.$(O)
+	$(O)l -o $(O)/list_tester -L . listTester.$(O)
+
+listTester.$(O):	listTester.go
+	$(O)g -I . listTester.go
+
 test:
 	
