@@ -13,6 +13,10 @@ type node struct {
 	prev, next *node
 }
 
+//infinite loop in these next two methods...
+//they'll just keep calling each other on two
+//non-nil nodes. not sure how to rework them
+//to break the loop.
 func(this *node) linkToFront(n *node) {
 	if n != nil {
 		n.linkToFront(this.prev)

@@ -43,6 +43,11 @@ func main() {
 	if err == nil && value.(string) != "hello" {
 		println("Test Failed (AT) toTest.At(0) != \"hello\"")
 	}
+
+	//Test 6: Add Another Item To Front:
+	toTest.PushFront("World")
+	println("Size:  " + Itoa(toTest.Len()))
+	toTest.ApplyToAllFromFront(printer)
 }
 
 
