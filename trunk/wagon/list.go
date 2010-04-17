@@ -125,8 +125,8 @@ func(this *LinkedList) At(index int) (interface{}, os.Error) {
 }
 func(this *LinkedList) ApplyToAllFromFront(action func(interface{}, int)os.Error) os.Error {
 	tempNode := this.head
-	for y:=1; y < this.length; y++ {
-		err := action(tempNode.getValue(), y -1)
+	for y:=0; y < this.length; y++ {
+		err := action(tempNode.getValue(), y)
 		if err != nil { return err }
 	}
 	return nil

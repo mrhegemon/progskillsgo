@@ -27,5 +27,8 @@ $(O)/list_tester:   $(O) list.$(O) listTester.$(O)
 listTester.$(O):	listTester.go
 	$(O)g -I . listTester.go
 
-test:
+test:	$(O)/list_tester
+	#run linked list unit tests.
+	#only prints output on error
+	$(O)/list_tester
 	
