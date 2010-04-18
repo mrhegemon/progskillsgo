@@ -18,18 +18,12 @@ type node struct {
 //non-nil nodes. not sure how to rework them
 //to break the loop.
 func(this *node) linkToFront(n *node) {
-	if n != nil {
-		n.linkToFront(this.prev)
-		n.linkToBack(this)
-	}
+	n.prev = this.prev
 	this.prev = n
 }
 
 func(this *node) linkToBack(n *node) {
-	if n != nil {
-		n.linkToFront(this)
-		n.linkToBack(this.next)
-	}
+	n.next = this.next
 	this.next = n
 }
 
@@ -65,6 +59,7 @@ func (this *LinkedList) PushFront(val interface{}) {
 		this.tail = nnode
 	} else {
 		nnode.linkToBack(this.head)
+		this.head.linkToFront(nnode)
 	}
 	this.head = nnode
 	this.length++
@@ -76,6 +71,7 @@ func (this *LinkedList) PushBack(val interface{}) {
 		this.head = nnode
 	} else {
 		nnode.linkToFront(this.tail)
+		this.tail.linkToBack(nnode)
 	}
 	this.tail = nnode
 	this.length++
@@ -137,7 +133,7 @@ func(this *LinkedList) ApplyToAllFromFront(action func(interface{}, int)os.Error
 }
 func(this *LinkedList) ApplyToAllFromBack(action func(interface{}, int)os.Error) os.Error {
 	tempNode := this.tail
-	for y:=this.length - 2; y > 0; y-- {
+	for y:=this.length - 1; y > 0; y-- {
 		err := action(tempNode.getValue(), y+1)
 		if err != nil { return err }
 	}
