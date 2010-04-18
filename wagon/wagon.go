@@ -1,6 +1,6 @@
 package wagon_game
 
-import "list"
+import ("list"; "os")
 
 //----------WAGON----------//
 type wagon struct {
@@ -23,11 +23,12 @@ func newWagon(n string, r, c int) *wagon {
 	temp := new(wagon)
 	temp.name = n
 	temp.x, temp.y = r, c
+	return temp
 }
 
 //----------GAME-----------//
 var( row, col, char int
-     list *LinkedList
+     my_list *list.LinkedList
 )
 
 func validMove(r, c int) bool {
@@ -36,30 +37,104 @@ func validMove(r, c int) bool {
 
 func NewGame(r, c int) {
 	row, col = r, c
-	list = new(LinkedList)
+	my_list = new(list.LinkedList)
 
 	Act('a')
 	Act('A')
 }
 
 func Act(command int) os.Error {
-	if command == 'a' {
-		list.PushFront(newWagon(string([]int{char})), 0, 0)
-		char++
-	} else if command == 'A' {
-		list.PushBack(newWagon(string[]int{char}), row-1, col-1)
-		char++
-	} else if command == 'u' {
-		if err := list.ApplyToAllFront(up(true)); err != nil {
-			return err
+	switch command {
+		case 'a': {
+			my_list.PushFront(newWagon(string([]int{char}), 0, 0))
+			char++
 		}
-	} else if command == 'U' {
-		if err := list.ApplyToAllBack(up(false)); err != nil {
-			return err
+		case 'A': {
+			my_list.PushBack(newWagon(string([]int{char}), 0, 0))
+			char++
+		}
+		//move up or down
+		case 'u': return my_list.ApplyToAllFromFront(upDown(true, true))
+		case 'U': return my_list.ApplyToAllFromBack(upDown(false, true))
+		case 'd': return my_list.ApplyToAllFromFront(upDown(true, false))
+		case 'D': return my_list.ApplyToAllFromBack(upDown(false, false))
+		
+		//move left or right
+		case 'l': return my_list.ApplyToAllFromFront(leftRight(true, true))
+		case 'L': return my_list.ApplyToAllFromBack(leftRight(false, true))
+		case 'r': return my_list.ApplyToAllFromFront(leftRight(true, false))
+		case 'R': return my_list.ApplyToAllFromBack(leftRight(false, false))
+	}
+	return nil
+}
+
+func upDown(front, up bool) func(interface{}, int)os.Error {
+	if front {
+		return func(val interface{}, index int)os.Error {
+			wag := val.(*wagon)
+			if index == 0 {
+				row, col := wag.getLocation()
+				switch up {
+					case true: return wag.move(row - 1, col)
+					case false: return wag.move(row + 1, col)
+				}
+			} else {
+				val, _ := my_list.At(index - 1)
+				prev := val.(*wagon)
+				return wag.move(prev.getLocation())
+			}
+			return nil
 		}
 	}
-
-	return nil
+	return func(val interface{}, index int)os.Error {
+		wag := val.(*wagon)
+		if index == my_list.Len() - 1 {
+			row, col := wag.getLocation()
+			switch up{
+				case true: return wag.move(row - 1, col)
+				case false: return wag.move(row + 1, col)
+			}
+		} else {
+			val, _ := my_list.At(index + 1)
+			prev := val.(*wagon)
+			return wag.move(prev.getLocation())
+		}
+		return nil
+	}
+}
+func leftRight(front, left bool) func(interface{}, int)os.Error {
+	if front {
+		return func(val interface{}, index int)os.Error {
+			wag := val.(*wagon)
+			if index == 0 {
+				row, col := wag.getLocation()
+				switch left {
+					case true: return wag.move(row, col - 1)
+					case false: return wag.move(row, col - 1)
+				}
+			} else {
+				val, _ := my_list.At(index - 1)
+				prev := val.(*wagon)
+				return wag.move(prev.getLocation())
+			}
+			return nil
+		}
+	}
+	return func(val interface{}, index int)os.Error {
+		wag := val.(*wagon)
+		if index == my_list.Len() - 1 {
+			row, col := wag.getLocation()
+			switch left {
+				case true: return wag.move(row, col - 1)
+				case false: return wag.move(row, col + 1)
+			}
+		} else {
+			val, _ := my_list.At(index + 1)
+			prev := val.(*wagon)
+			return wag.move(prev.getLocation())
+		}
+		return nil
+	}
 }
 
 func Print() {
@@ -68,10 +143,10 @@ func Print() {
 	//more than 1 character long, so we should be able to line them up
 	//nicely.
 
-	for y:= 0; y < list.Len(); y++ {
-		val := list.At(y).(*wagon)
+	for y:= 0; y < my_list.Len(); y++ {
+		//val, _ := my_list.At(y)
 		
-		r, c := val.getLocation()
+		//r, c := val.(*wagon).getLocation()
 
 		//print using ANSI
 	}
