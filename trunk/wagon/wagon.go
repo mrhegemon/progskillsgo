@@ -1,3 +1,12 @@
+/*
+Authors: William Broza, Tym Lipari
+Matrix Testing program
+
+tests add and mult matrices
+
+usage:
+	matrix
+*/
 package wagon_game
 
 import ("list"; "os")
@@ -102,6 +111,7 @@ func upDown(front, up bool) func(interface{}, int)os.Error {
 		return nil
 	}
 }
+
 func leftRight(front, left bool) func(interface{}, int)os.Error {
 	if front {
 		return func(val interface{}, index int)os.Error {

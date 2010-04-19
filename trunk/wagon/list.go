@@ -1,3 +1,12 @@
+/*
+Authors: William Broza, Tym Lipari
+Matrix Testing program
+
+tests add and mult matrices
+
+usage:
+	matrix
+*/
 package list
 
 import "os"
@@ -49,9 +58,13 @@ type LinkedList struct{
 }
 
 func (this *LinkedList) Len() int { return this.length }
+
 func (this *LinkedList) Init() { this.length = 0; this.head = nil; this.tail = nil }
+
 func (this *LinkedList) Front() interface{} { return this.head.getValue() }
+
 func (this *LinkedList) Back() interface{} { return this.tail.getValue() }
+
 func (this *LinkedList) PushFront(val interface{}) {
 	nnode := newNode(val)
 
@@ -64,6 +77,7 @@ func (this *LinkedList) PushFront(val interface{}) {
 	this.head = nnode
 	this.length++
 }
+
 func (this *LinkedList) PushBack(val interface{}) {
 	nnode := newNode(val)
 
@@ -102,6 +116,7 @@ func(this *LinkedList) Remove(index int) (interface{}, os.Error) {
 
 	return tempNode.getValue(), nil
 }
+
 func(this *LinkedList) At(index int) (interface{}, os.Error) {
 	if index < 0 || index >= this.length {
 		return nil, RANGE_ERROR 
@@ -123,24 +138,25 @@ func(this *LinkedList) At(index int) (interface{}, os.Error) {
 
 	return nil, os.NewError("LinkedList:  Search Error")
 }
+
 func(this *LinkedList) ApplyToAllFromFront(action func(interface{}, int)os.Error) os.Error {
 	tempNode := this.head
 	for y:=0; y < this.length; y++ {
 		err := action(tempNode.getValue(), y)
 		if err != nil { return err }
+		tempNode = tempNode.next
 	}
 	return nil
 }
+
 func(this *LinkedList) ApplyToAllFromBack(action func(interface{}, int)os.Error) os.Error {
 	tempNode := this.tail
-	for y:=this.length - 1; y > 0; y-- {
-		err := action(tempNode.getValue(), y+1)
+	for y:=this.length-1; y >= 0; y-- {
+		err := action(tempNode.getValue(), y)
 		if err != nil { return err }
+		tempNode = tempNode.prev
 	}
 	return nil
 }
-
-
-
 
 
