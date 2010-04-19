@@ -1,3 +1,12 @@
+/*
+Authors: William Broza, Tym Lipari
+Matrix Testing program
+
+tests add and mult matrices
+
+usage:
+	matrix
+*/
 package main
 
 import "list"
@@ -9,13 +18,13 @@ func main() {
 	
 	//Test 1: Empty List
 	if toTest.Len() != 0 {
-		println("Test Failed (Empty List):   Len != 0")
+		println("Test Failed (Empty List): Len != 0")
 	}
 	
 	//Test 2: Add An Item To Front
 	toTest.PushFront("hello")
 	if toTest.Len() != 1 {
-		println("Test Failed (Add to Front Len != 1")
+		println("Test Failed (Add to Front Len != 1, Len =" + Itoa(toTest.Len()))
 	}
 	
 	//Test 3: Verify Item (FRONT)
@@ -44,13 +53,16 @@ func main() {
 		println("Test Failed (AT) toTest.At(0) != \"hello\"")
 	}
 
+	toTest2 := new(list.LinkedList)
+
 	//Test 6: Add Another Item To Front:
-	toTest.PushFront("World")
-	println("Size:  " + Itoa(toTest.Len()))
-	toTest.ApplyToAllFromFront(printer)
+	toTest2.PushFront("2World")
+	toTest2.PushFront("1Worldz")
+	toTest2.PushBack("3kWorldz")
+
+	println("Back:  " + toTest2.Back().(string))
+	println("Size:  " + Itoa(toTest2.Len()))
+	toTest2.ApplyToAllFromBack(printer)
 }
-
-
-
 
 
