@@ -23,17 +23,16 @@ type node struct {
 	prev, next *node
 }
 
-//infinite loop in these next two methods...
-//they'll just keep calling each other on two
-//non-nil nodes. not sure how to rework them
-//to break the loop.
-func(this *node) linkToFront(n *node) {
-	n.prev = this.prev
+func(this *node) getPrev() *node {
+	return this.prev
+}
+func(this *node) getNext() *node {
+	return this.next
+}
+func(this *node) setPrev(n *node) {
 	this.prev = n
 }
-
-func(this *node) linkToBack(n *node) {
-	n.next = this.next
+func(this *node) setNext(n *node) {
 	this.next = n
 }
 
@@ -49,6 +48,18 @@ func newNode(val interface{}) *node{
 	newNode := new(node)
 	newNode.setValue(val)
 	return newNode
+}
+
+func link(front, back *node) os.Error {
+	back.setPrev(front)
+	back.setNext(front.getNext())
+	
+	if front.getNext() != nil {
+		front.getNext().setPrev(back)
+	}
+	front.setNext(back)
+	
+	return nil
 }
 
 //===========LinkedList================//
@@ -72,8 +83,7 @@ func (this *LinkedList) PushFront(val interface{}) {
 	if this.head == nil {
 		this.tail = nnode
 	} else {
-		nnode.linkToBack(this.head)
-		this.head.linkToFront(nnode)'
+		link(nnode, this.head)
 	}
 	this.head = nnode
 	this.length++
@@ -85,8 +95,7 @@ func (this *LinkedList) PushBack(val interface{}) {
 	if this.head == nil {
 		this.head = nnode
 	} else {
-		nnode.linkToFront(this.tail)
-		this.tail.linkToBack(nnode)
+		link(this.tail, nnode)
 	}
 	this.tail = nnode
 	this.length++
@@ -98,11 +107,11 @@ func(this *LinkedList) Remove(index int) (interface{}, os.Error) {
 
 	//special cases (index = 0 or length-1)
 	if index == 0 {
-		this.head.next.linkToFront(nil)
-		this.head = this.head.next
+		link(nil, this.head.getNext())
+		this.head = this.head.getNext()
 	} else if index == this.length - 1 {
-		this.tail.prev.linkToBack(nil)
-		this.tail = this.tail.prev
+		link(this.tail.getPrev(), nil)
+		this.tail = this.tail.getPrev()
 	}
 
 	tempNode := this.head
@@ -110,8 +119,8 @@ func(this *LinkedList) Remove(index int) (interface{}, os.Error) {
 		tempNode = tempNode.next
 	}
 
-	tempNode.prev.linkToBack(tempNode.next)
-	tempNode.next.linkToFront(tempNode.prev)
+	link(tempNode.getPrev(), tempNode.getNext())
+	//link(tempNode.getNext(), tempNode.getPrev())
 
 	this.length--
 

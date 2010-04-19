@@ -56,15 +56,17 @@ func main() {
 	toTest2 := new(list.LinkedList)
 
 	//Test 6: Add Another Item To Front:
-	toTest2.PushFront("2World")
-	toTest2.PushFront("1Worldz")
-	toTest2.PushBack("3kWorldz")
+	toTest2.PushFront("3World")
+	toTest2.PushFront("2Worldz")
+	toTest2.PushBack("4kWorldz")
+	toTest2.PushFront("1Hello")
+	toTest2.PushBack("5Helloz")
+	toTest2.PushBack("6Hey")
 	
 	if err := toTest2.TestLinks(); err != nil {
 		println(err.String())
 	}
 
-	println("Back:  " + toTest2.Back().(string))
 	println("Size:  " + Itoa(toTest2.Len()))
 	toTest2.ApplyToAllFromBack(printer)
 }
