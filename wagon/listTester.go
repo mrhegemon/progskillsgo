@@ -14,6 +14,15 @@ import "os"
 import . "strconv"
 
 func main() {
+	var verbose bool = false
+	setArgs := func() {
+		for y := 1; y < len (os.Args); y++ {
+			if os.Args[y] == "-v" { verbose = true }
+		}
+	}
+	
+	setArgs()
+	
 	toTest := new(list.LinkedList)
 	
 	//Test 1: Empty List
@@ -34,17 +43,17 @@ func main() {
 	}
 	
 	//Test 4: Applying Actions (FROM FRONT)
-	test4 := ""
-	printer := func(val interface{}, index int) os.Error {
-		//test4 += (val.(string))
-		println("[" + Itoa(index) + "] = " + (val.(string)))
+	test := ""
+	scanner := func(val interface{}, index int) os.Error {
+		test += (val.(string))
+		if verbose { println("[" + Itoa(index) + "] = " + (val.(string))) }
 		return nil
 	}
 	
-	toTest.ApplyToAllFromFront(printer)
+	toTest.ApplyToAllFromFront(scanner)
 	
-	if test4 != "hello" {
-		println("Test Failed (ApplyToFront) test4 != \"hello\"")
+	if test != "hello" {
+		println("Test Failed (ApplyToFront - 1) test4 != \"hello\"")
 	}
 	
 	//Test 5: (AT)
@@ -53,22 +62,31 @@ func main() {
 		println("Test Failed (AT) toTest.At(0) != \"hello\"")
 	}
 
-	toTest2 := new(list.LinkedList)
-
 	//Test 6: Add Another Item To Front:
-	toTest2.PushFront("3World")
-	toTest2.PushFront("2Worldz")
-	toTest2.PushBack("4kWorldz")
-	toTest2.PushFront("1Hello")
-	toTest2.PushBack("5Helloz")
-	toTest2.PushBack("6Hey")
 	
-	if err := toTest2.TestLinks(); err != nil {
-		println(err.String())
-	}
+	//clear the list
+	toTest = new(list.LinkedList)
+	
+	//Add some random strings. Leading numbers indicate
+	//expected order
+	toTest.PushFront("3World")
+	toTest.PushBack("4Worldz")
+	toTest.PushBack("5kWorldz")
+	toTest.PushFront("2Hello")
+	toTest.PushBack("6Helloz")
+	toTest.PushFront("1Hey")
 
-	println("Size:  " + Itoa(toTest2.Len()))
-	toTest2.ApplyToAllFromBack(printer)
+	if verbose { println("Size:  " + Itoa(toTest.Len())) }
+	//reset the test variable
+	test = ""
+	toTest.ApplyToAllFromFront(scanner)
+	
+	if test != "1Hey2Hello3World4Worldz5kWorldz6Helloz" {
+		println("Test Failed (ApplyToFront - several) test != \"1Hey2Hello3World4Worldz5kWorldz6Helloz\"")
+	}	
 }
+
+
+
 
 
