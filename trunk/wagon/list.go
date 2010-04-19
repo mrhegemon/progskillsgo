@@ -10,7 +10,7 @@ usage:
 package list
 
 import "os"
-import "strconv"
+//import "strconv"
 
 var( RANGE_ERROR os.Error)
 
@@ -51,8 +51,10 @@ func newNode(val interface{}) *node{
 }
 
 func link(front, back *node) os.Error {
+	if back.getPrev() != nil {
+		back.getPrev().setNext(front)
+	}
 	back.setPrev(front)
-	back.setNext(front.getNext())
 	
 	if front.getNext() != nil {
 		front.getNext().setPrev(back)
@@ -154,7 +156,7 @@ func(this *LinkedList) ApplyToAllFromFront(action func(interface{}, int)os.Error
 	for y:=0; y < this.length; y++ {
 		err := action(tempNode.getValue(), y)
 		if err != nil { return err }
-		tempNode = tempNode.next
+		tempNode = tempNode.getNext()
 	}
 	return nil
 }
@@ -164,22 +166,12 @@ func(this *LinkedList) ApplyToAllFromBack(action func(interface{}, int)os.Error)
 	for y:=this.length-1; y >= 0; y-- {
 		err := action(tempNode.getValue(), y)
 		if err != nil { return err }
-		tempNode = tempNode.prev
+		tempNode = tempNode.getPrev()
 	}
 	return nil
 }
 
-func(this *LinkedList) TestLinks() os.Error {
-	tempNode1 := this.head
-	tempNode2 := this.head.next
-	for y:= 1; y < this.length -1; y++ {
-		if tempNode2.prev != tempNode1 {
-			return os.NewError("Not Linked Properly (Front):  " + strconv.Itoa(y))
-		} else if tempNode1.next != tempNode2 {
-			return os.NewError("Not Linked Properly (Back). Second index:  " + strconv.Itoa(y))
-		}
-	}
-	return nil
-}
+
+
 
 

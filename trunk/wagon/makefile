@@ -31,4 +31,8 @@ test:	$(O)/list_tester
 	#run linked list unit tests.
 	#only prints output on error
 	$(O)/list_tester
+
+verbose_test: $(O)/list_tester
+	#runs tests in verbose mode
+	$(O)/list_tester -v
 	
