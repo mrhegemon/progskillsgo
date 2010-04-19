@@ -59,6 +59,10 @@ func main() {
 	toTest2.PushFront("2World")
 	toTest2.PushFront("1Worldz")
 	toTest2.PushBack("3kWorldz")
+	
+	if err := toTest2.TestLinks(); err != nil {
+		println(err.String())
+	}
 
 	println("Back:  " + toTest2.Back().(string))
 	println("Size:  " + Itoa(toTest2.Len()))
