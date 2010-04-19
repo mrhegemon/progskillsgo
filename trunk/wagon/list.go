@@ -10,6 +10,7 @@ usage:
 package list
 
 import "os"
+import "strconv"
 
 var( RANGE_ERROR os.Error)
 
@@ -72,7 +73,7 @@ func (this *LinkedList) PushFront(val interface{}) {
 		this.tail = nnode
 	} else {
 		nnode.linkToBack(this.head)
-		this.head.linkToFront(nnode)
+		this.head.linkToFront(nnode)'
 	}
 	this.head = nnode
 	this.length++
@@ -155,6 +156,19 @@ func(this *LinkedList) ApplyToAllFromBack(action func(interface{}, int)os.Error)
 		err := action(tempNode.getValue(), y)
 		if err != nil { return err }
 		tempNode = tempNode.prev
+	}
+	return nil
+}
+
+func(this *LinkedList) TestLinks() os.Error {
+	tempNode1 := this.head
+	tempNode2 := this.head.next
+	for y:= 1; y < this.length -1; y++ {
+		if tempNode2.prev != tempNode1 {
+			return os.NewError("Not Linked Properly (Front):  " + strconv.Itoa(y))
+		} else if tempNode1.next != tempNode2 {
+			return os.NewError("Not Linked Properly (Back). Second index:  " + strconv.Itoa(y))
+		}
 	}
 	return nil
 }
