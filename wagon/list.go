@@ -108,32 +108,30 @@ func (this *LinkedList) PushBack(val interface{}) {
 	this.tail = nnode
 	this.length++
 }
+
 func (this *LinkedList) Remove(index int) (interface{}, os.Error) {
 	if index < 0 || index >= this.length {
 		return nil, RANGE_ERROR
 	}
 
 	tempNode := new(node)
-	//special cases (index = 0 or length-1)
-	if index == 0 {
-		tempNode = this.head
-		link(nil, this.head.getNext())
-		this.head = this.head.getNext()
-	} else if index == this.length-1 {
-		tempNode = this.tail
-		link(this.tail.getPrev(), nil)
-		this.tail = this.tail.getPrev()
-	} else {
-		tempNode, err := this.getNode(index)
-
-		if err != nil { return nil, err }
-		
-		link(tempNode.getPrev(), tempNode.getNext())
-		//link(tempNode.getNext(), tempNode.getPrev())
+	if tempNode.getPrev() != nil {
+		tempNode.getPrev().setNext(tempNode.getNext())
 	}
-
+	
+	if tempNode.getNext() != nil {
+		tempNode.getNext().setPrev(tempNode.getPrev())
+	}
+	
+	//special cases:
+	if index == 0 {
+		this.head = this.head.getNext()
+	} else if index == this.Len() - 1 {
+		this.tail = this.tail.getPrev()
+	}
+	
 	this.length--
-
+	
 	return tempNode.getValue(), nil
 }
 
@@ -152,13 +150,13 @@ func (this *LinkedList) getNode(index int) (*node, os.Error) {
 	if index < (this.length / 2) {
 		tempNode := this.head
 		for y := 1; y < index; y++ {
-			tempNode = tempNode.next
+			tempNode = tempNode.getNext()
 		}
 		return tempNode, nil
 	} else {
 		tempNode := this.tail
 		for y := this.length - 2; y > index; y-- {
-			tempNode = tempNode.prev
+			tempNode = tempNode.getPrev()
 		}
 		return tempNode, nil
 	}
