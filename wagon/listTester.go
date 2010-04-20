@@ -80,10 +80,33 @@ func main() {
 	//reset the test variable
 	test = ""
 	toTest.ApplyToAllFromFront(scanner)
-	
+
 	if test != "1Hey2Hello3World4Worldz5kWorldz6Helloz" {
 		println("Test Failed (ApplyToFront - several) test != \"1Hey2Hello3World4Worldz5kWorldz6Helloz\"")
-	}	
+	}
+	
+	
+	//Test 7: Remove the head of the list
+	toTest.Remove(0)
+	
+	if verbose { println("Size:  " + Itoa(toTest.Len())) }
+	test = ""
+	toTest.ApplyToAllFromBack(scanner)
+	
+	if test != "6Helloz5kWorldz4Worldz3World2Hello" {
+		println("Test Failed (Remove - 1) test != \"6Helloz5kWorldz4Worldz3World2Hello\"")
+	}
+	
+	/*//Test 8: Remove several arbitrary
+	toTest.Remove(3)
+	toTest.Remove(1)
+	
+	test = ""
+	toTest.ApplyToAllFromFront(scanner)
+	
+	if test != "2Hello4Worldz6Helloz" {
+		println("Test Failed (Remove - several) test != \"2Hello4Worldz6Helloz\"")
+	}*/
 }
 
 

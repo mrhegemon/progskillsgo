@@ -12,63 +12,69 @@ package list
 import "os"
 //import "strconv"
 
-var( RANGE_ERROR os.Error)
+var (
+	RANGE_ERROR os.Error
+)
 
-func init(){
+func init() {
 	RANGE_ERROR = os.NewError("LinkedList:  Index out of range.")
 }
 
 type node struct {
-	val interface{}
+	val        interface{}
 	prev, next *node
 }
 
-func(this *node) getPrev() *node {
+func (this *node) getPrev() *node {
 	return this.prev
 }
-func(this *node) getNext() *node {
+func (this *node) getNext() *node {
 	return this.next
 }
-func(this *node) setPrev(n *node) {
+func (this *node) setPrev(n *node) {
 	this.prev = n
 }
-func(this *node) setNext(n *node) {
+func (this *node) setNext(n *node) {
 	this.next = n
 }
 
-func(this *node) setValue(value interface{}) interface{} {
+func (this *node) setValue(value interface{}) interface{} {
 	old := this.val
 	this.val = value
 	return old
 }
 
-func(this *node) getValue() interface{} { return this.val }
+func (this *node) getValue() interface{} { return this.val }
 
-func newNode(val interface{}) *node{
+func newNode(val interface{}) *node {
 	newNode := new(node)
 	newNode.setValue(val)
 	return newNode
 }
 
 func link(front, back *node) os.Error {
-	if back.getPrev() != nil {
-		back.getPrev().setNext(front)
+	if back != nil {
+		if back.getPrev() != nil {
+			back.getPrev().setNext(front)
+		}
+		back.setPrev(front)
 	}
-	back.setPrev(front)
-	
-	if front.getNext() != nil {
-		front.getNext().setPrev(back)
+
+	if front != nil {
+		if front.getNext() != nil {
+			front.getNext().setPrev(back)
+		}
+		front.setNext(back)
 	}
-	front.setNext(back)
-	
+
 	return nil
 }
 
 //===========LinkedList================//
 
-type LinkedList struct{
+type LinkedList struct {
 	head, tail *node
-	length int
+	length     int
 }
 
 func (this *LinkedList) Len() int { return this.length }
@@ -102,76 +108,84 @@ func (this *LinkedList) PushBack(val interface{}) {
 	this.tail = nnode
 	this.length++
 }
-func(this *LinkedList) Remove(index int) (interface{}, os.Error) {
+func (this *LinkedList) Remove(index int) (interface{}, os.Error) {
 	if index < 0 || index >= this.length {
 		return nil, RANGE_ERROR
 	}
 
+	tempNode := new(node)
 	//special cases (index = 0 or length-1)
 	if index == 0 {
+		tempNode = this.head
 		link(nil, this.head.getNext())
 		this.head = this.head.getNext()
-	} else if index == this.length - 1 {
+	} else if index == this.length-1 {
+		tempNode = this.tail
 		link(this.tail.getPrev(), nil)
 		this.tail = this.tail.getPrev()
-	}
+	} else {
+		tempNode, err := this.getNode(index)
 
-	tempNode := this.head
-	for y := 1; y <= index; y++ {
-		tempNode = tempNode.next
+		if err != nil { return nil, err }
+		
+		link(tempNode.getPrev(), tempNode.getNext())
+		//link(tempNode.getNext(), tempNode.getPrev())
 	}
-
-	link(tempNode.getPrev(), tempNode.getNext())
-	//link(tempNode.getNext(), tempNode.getPrev())
 
 	this.length--
 
 	return tempNode.getValue(), nil
 }
 
-func(this *LinkedList) At(index int) (interface{}, os.Error) {
-	if index < 0 || index >= this.length {
-		return nil, RANGE_ERROR 
-	}
+func (this *LinkedList) At(index int) (interface{}, os.Error) {
+	foundNode, err := this.getNode(index)
 	
+	if foundNode != nil { return foundNode.getValue(), err }
+	return nil, err
+}
+
+func (this *LinkedList) getNode(index int) (*node, os.Error) {
+	if index < 0 || index >= this.length {
+		return nil, RANGE_ERROR
+	}
+
 	if index < (this.length / 2) {
 		tempNode := this.head
-		for y:= 1; y < this.length; y++ {
+		for y := 1; y < index; y++ {
 			tempNode = tempNode.next
 		}
-		return tempNode.getValue(), nil
+		return tempNode, nil
 	} else {
 		tempNode := this.tail
-		for y:= this.length - 2; y > 0; y-- {
+		for y := this.length - 2; y > index; y-- {
 			tempNode = tempNode.prev
 		}
-		return tempNode.getValue(), nil
+		return tempNode, nil
 	}
 
 	return nil, os.NewError("LinkedList:  Search Error")
 }
 
-func(this *LinkedList) ApplyToAllFromFront(action func(interface{}, int)os.Error) os.Error {
+func (this *LinkedList) ApplyToAllFromFront(action func(interface{}, int) os.Error) os.Error {
 	tempNode := this.head
-	for y:=0; y < this.length; y++ {
+	for y := 0; y < this.length; y++ {
 		err := action(tempNode.getValue(), y)
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		tempNode = tempNode.getNext()
 	}
 	return nil
 }
 
-func(this *LinkedList) ApplyToAllFromBack(action func(interface{}, int)os.Error) os.Error {
+func (this *LinkedList) ApplyToAllFromBack(action func(interface{}, int) os.Error) os.Error {
 	tempNode := this.tail
-	for y:=this.length-1; y >= 0; y-- {
+	for y := this.length - 1; y >= 0; y-- {
 		err := action(tempNode.getValue(), y)
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		tempNode = tempNode.getPrev()
 	}
 	return nil
 }
-
-
-
-
-
