@@ -65,7 +65,7 @@ func main() {
 	//Test 6: Add Another Item To Front:
 	
 	//clear the list
-	toTest = new(list.LinkedList)
+	toTest.Init()
 	
 	//Add some random strings. Leading numbers indicate
 	//expected order
@@ -97,16 +97,21 @@ func main() {
 		println("Test Failed (Remove - 1) test != \"6Helloz5kWorldz4Worldz3World2Hello\"")
 	}
 	
-	/*//Test 8: Remove several arbitrary
-	toTest.Remove(3)
-	toTest.Remove(1)
+	//Test 8: Remove several arbitrary
+	if _, err := toTest.Remove(3); err != nil {
+		println(err.String())
+	}
+	if _, err := toTest.Remove(1); err != nil  {
+		println(err.String())
+	}
 	
+	if verbose { println("Size:  " + Itoa(toTest.Len())) }
 	test = ""
 	toTest.ApplyToAllFromFront(scanner)
 	
 	if test != "2Hello4Worldz6Helloz" {
 		println("Test Failed (Remove - several) test != \"2Hello4Worldz6Helloz\"")
-	}*/
+	}
 }
 
 
