@@ -118,27 +118,29 @@ func (this *LinkedList) Remove(index int) (interface{}, os.Error) {
 	if tempNode.getPrev() != nil {
 		tempNode.getPrev().setNext(tempNode.getNext())
 	}
-	
+
 	if tempNode.getNext() != nil {
 		tempNode.getNext().setPrev(tempNode.getPrev())
 	}
-	
+
 	//special cases:
 	if index == 0 {
 		this.head = this.head.getNext()
-	} else if index == this.Len() - 1 {
+	} else if index == this.Len()-1 {
 		this.tail = this.tail.getPrev()
 	}
-	
+
 	this.length--
-	
+
 	return tempNode.getValue(), nil
 }
 
 func (this *LinkedList) At(index int) (interface{}, os.Error) {
 	foundNode, err := this.getNode(index)
-	
-	if foundNode != nil { return foundNode.getValue(), err }
+
+	if foundNode != nil {
+		return foundNode.getValue(), err
+	}
 	return nil, err
 }
 
