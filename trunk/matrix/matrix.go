@@ -7,7 +7,7 @@ Matrix evaluates addition and multiplacation of matrices
 
 package matrix
 
-import ("fmt"; "os"; "container/vector")
+import ("fmt"; "os"; "container/vector"; "rand")
 
 //Structure of a Matrix and its attributes.
 type Matrix struct {
@@ -69,7 +69,7 @@ func Add(A *Matrix, B *Matrix) (*Matrix, os.Error) {
 	if A.GetRow() != B.GetRow() || A.GetCol() != B.GetCol() {
 
 		//will not accept nil!! FIX
-		return A, os.NewError("Matrixes are not same dimensions")
+		return nil, os.NewError("Matrixes are not same dimensions")
 	}
 	rm := new(Matrix)
 	rm.Build(B.GetRow(), A.GetCol())
@@ -90,7 +90,7 @@ func Mult(A *Matrix, B *Matrix) (*Matrix, os.Error) {
 	if (B.GetRow() != A.GetCol()) {
 		
 		//will not accept nil!! FIX
-		return A,  os.NewError("matrices are not the correct dimensions")
+		return nil,  os.NewError("matrices are not the correct dimensions")
 	}
 	rm := new(Matrix)
 	rm.Build(A.GetRow(), B.GetCol())
@@ -129,14 +129,16 @@ func(m *Matrix) Print() os.Error {
 
 //builds a test matrix from two generation seeds
 //returns: os.Error error
-func (m *Matrix) BuildTestMatrix(x int, y int, genNum float, genNum2 float){
-	//rm := new(Matrix)
+func (m *Matrix) BuildTestMatrix(x int, y int){
+
 	m.Build(x, y)
 	for a := 0; a < x; a++ {
 		for b := 0; b < y; b++ {
-			m.Set(a, b, genNum)
-			//should be rand.
-			genNum = (genNum2 * 1.23456789) / (2 /genNum)
+			//you're a dipshit. read the documentation next time.
+			//oh, and learn to spell (it was genNum in the m.Set line
+		  //genNum := new(*rand.Rand)
+			getNum := rand.New(rand.NewSource(1000))
+			m.Set(a, b, getNum.Float())
 		}
 	}
 }

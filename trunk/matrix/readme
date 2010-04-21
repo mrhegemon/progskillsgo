@@ -7,6 +7,9 @@ matrices.
 
 main.go runs test cases to ensure that matrix.go funcitons properly.
 
+<<<<<<< .mine
+To run main.go, run make using makefile.  Then run main with no arguments.l
+=======
 To run main.go, run make using makefile.  Then run main with no arguments.
 
 *Note:
@@ -14,3 +17,4 @@ To run main.go, run make using makefile.  Then run main with no arguments.
 There appears to be a problem using pointers with the language. Our code relies heavily on pointers, and we've been unable to pinpoint exactly where the problem lies, and believe it is a problem with the compiler. We were able to isolate that the for loop in our matrix.Build function was not updating the slice properly, however further testing showed that even if we were able to populate that correctly, other places that point to that reference of Matrix receive 0 values for the Matrix's values, which is why we believe this is a problem with the pointers.
 
 We are currently compiling our code on the CS mac computers.
+>>>>>>> .r49
