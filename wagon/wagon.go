@@ -16,6 +16,7 @@ import (
 	"list"
 	"os"
 	 . "strconv"
+	 "fmt"
 )
 
 //----------WAGON----------//
@@ -209,7 +210,7 @@ func leftRight(front, left bool) func(interface{}, int) os.Error {
 		} else {
 			val, _ := my_list.At(index + 1)
 			prev := val.(*wagon)
-			return wag.move(prev.getLocation())
+			return wag.move(prev.getLastLocation())
 		}
 		return nil
 	}
@@ -231,8 +232,7 @@ func Print() {
 	print("\033[" + Itoa(r) + ";" + Itoa(c) + "H" + val.(*wagon).getName())
 		//print using ANSI
 	}
-
-	print("\033[" + Itoa(row + 1) + ";0H ")
 	//using ANSI, print enough lines so that there are "row" number of
 	//lines on the screen
+	fmt.Print("\033[" + Itoa(row + 1) + ";0H")
 }
