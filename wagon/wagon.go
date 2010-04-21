@@ -139,9 +139,17 @@ func upDown(front, up bool) func(interface{}, int) os.Error {
 				row, col := wag.getLocation()
 				switch up {
 				case true:
-					return wag.move(row-1, col)
+					row--
+					if my_list.ApplyToAllFromFront(validator(row, col)) == nil {
+						return wag.move(row, col)
+					}
+					return os.NewError("CANNOT MOVE")
 				case false:
-					return wag.move(row+1, col)
+					row++
+					if my_list.ApplyToAllFromFront(validator(row, col)) == nil {
+						return wag.move(row, col)
+					}
+					return os.NewError("CANNOT MOVE")
 				}
 			} else {
 				val, _ := my_list.At(index - 1)
@@ -157,9 +165,17 @@ func upDown(front, up bool) func(interface{}, int) os.Error {
 			row, col := wag.getLocation()
 			switch up {
 			case true:
-				return wag.move(row-1, col)
+				row--
+				if my_list.ApplyToAllFromFront(validator(row, col)) == nil {
+					return wag.move(row, col)
+				}
+				return os.NewError("CANNOT MOVE")
 			case false:
-				return wag.move(row+1, col)
+				row++
+				if my_list.ApplyToAllFromFront(validator(row, col)) == nil {
+					return wag.move(row, col)
+				}
+				return os.NewError("CANNOT MOVE")
 			}
 		} else {
 			val, _ := my_list.At(index + 1)
@@ -177,7 +193,7 @@ func upDown(front, up bool) func(interface{}, int) os.Error {
 //!front = back of train
 //left = move left
 //!left = move right
-func leftRight(front, left bool) func(interface{}, int) os.Error {
+func leftRight(front, left bool) func(interface{}, int) os.Error {	
 	if front {
 		return func(val interface{}, index int) os.Error {
 			wag := val.(*wagon)
@@ -185,9 +201,17 @@ func leftRight(front, left bool) func(interface{}, int) os.Error {
 				row, col := wag.getLocation()
 				switch left {
 				case true:
-					return wag.move(row, col-1)
+					col--
+					if my_list.ApplyToAllFromFront(validator(row, col)) == nil {
+						return wag.move(row, col)
+					}
+					return os.NewError("CANNOT MOVE")
 				case false:
-					return wag.move(row, col+1)
+					col++
+					if my_list.ApplyToAllFromFront(validator(row, col)) == nil {
+						return wag.move(row, col)
+					}
+					return os.NewError("CANNOT MOVE")
 				}
 			} else {
 				val, _ := my_list.At(index - 1)
@@ -203,9 +227,17 @@ func leftRight(front, left bool) func(interface{}, int) os.Error {
 			row, col := wag.getLocation()
 			switch left {
 			case true:
-				return wag.move(row, col-1)
+				col--
+				if my_list.ApplyToAllFromFront(validator(row, col)) == nil {
+					return wag.move(row, col)
+				}
+				return os.NewError("CANNOT MOVE")
 			case false:
-				return wag.move(row, col+1)
+				col ++
+				if my_list.ApplyToAllFromFront(validator(row, col)) == nil {
+					return wag.move(row, col)
+				}
+				return os.NewError("CANNOT MOVE")
 			}
 		} else {
 			val, _ := my_list.At(index + 1)
@@ -215,6 +247,17 @@ func leftRight(front, left bool) func(interface{}, int) os.Error {
 		return nil
 	}
 }
+
+func validator(nRow, nCol int) func(interface{}, int) os.Error {
+		return func(val interface{}, index int) os.Error {
+			wag := val.(*wagon)
+			wagRow, wagCol := wag.getLocation()
+			if wagRow == nRow && wagCol == nCol {
+				return os.NewError("Wagon Already There!!!")
+			}
+			return  nil
+		}
+	}
 
 //Print()
 //prints the game board
