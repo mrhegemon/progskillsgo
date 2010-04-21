@@ -180,13 +180,13 @@ func (this *LinkedList) getNode(index int) (*node, os.Error) {
 	}
 	if index < (this.length / 2) {
 		tempNode := this.head
-		for y := 1; y < index; y++ {
+		for y := 0; y < index; y++ {
 			tempNode = tempNode.getNext()
 		}
 		return tempNode, nil
 	} else {
 		tempNode := this.tail
-		for y := this.length - 2; y > index; y-- {
+		for y := this.length - 1; y > index; y-- {
 			tempNode = tempNode.getPrev()
 		}
 		return tempNode, nil
