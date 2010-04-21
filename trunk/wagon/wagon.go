@@ -5,24 +5,41 @@ Matrix Testing program
 tests add and mult matrices
 
 usage:
-	matrix
+	wagon_game
 */
+
+//MAGIC NUMBER BOARD SIZE FIX
+
 package wagon_game
 
 import (
 	"list"
 	"os"
+	 . "strconv"
 )
 
 //----------WAGON----------//
+//wagon structure
 type wagon struct {
 	name string
 	x, y int //(x, y) location
 }
 
+//wagon getLocation()
+//returns two ints of the location
 func (this *wagon) getLocation() (int, int) {
 	return this.x, this.y
 }
+
+//wagon getName()
+//returns the name
+func (this *wagon) getName() string {
+	return this.name
+}
+
+//wagon move(r c)
+//moves wagon to row column
+//returns: error
 func (this *wagon) move(r, c int) os.Error {
 	if validMove(r, c) {
 		this.x, this.y = r, c
@@ -31,6 +48,8 @@ func (this *wagon) move(r, c int) os.Error {
 	return os.NewError("WagonGame:  Invalid Location")
 }
 
+//newWagon(name, row, column)
+//returns: new wagon
 func newWagon(n string, r, c int) *wagon {
 	temp := new(wagon)
 	temp.name = n
@@ -39,15 +58,20 @@ func newWagon(n string, r, c int) *wagon {
 }
 
 //----------GAME-----------//
+// game variables
 var (
 	row, col, char int
-	my_list        *list.LinkedList
+	my_list *list.LinkedList
 )
 
+//validMove(r c)
+//returns: boolean if valid mood
 func validMove(r, c int) bool {
 	return r >= 0 && r < row && c >= 0 && c < col
 }
 
+//NewGame(r c)
+//initializes a new game
 func NewGame(r, c int) {
 	row, col = r, c
 	my_list = new(list.LinkedList)
@@ -56,6 +80,9 @@ func NewGame(r, c int) {
 	Act('A')
 }
 
+//Act(command)
+//acts outs commands in the game
+//returns: error
 func Act(command int) os.Error {
 	switch command {
 	case 'a':
@@ -91,6 +118,9 @@ func Act(command int) os.Error {
 	return nil
 }
 
+//upDown(front up)
+//
+//returns: function error
 func upDown(front, up bool) func(interface{}, int) os.Error {
 	if front {
 		return func(val interface{}, index int) os.Error {
@@ -130,6 +160,9 @@ func upDown(front, up bool) func(interface{}, int) os.Error {
 	}
 }
 
+//leftRight(front up)
+//
+//returns: function error
 func leftRight(front, left bool) func(interface{}, int) os.Error {
 	if front {
 		return func(val interface{}, index int) os.Error {
@@ -169,20 +202,24 @@ func leftRight(front, left bool) func(interface{}, int) os.Error {
 	}
 }
 
+//Print()
+//prints the game board
 func Print() {
 	//iterate over all the values of the list, and print them,
 	//using ANSI to align them properly. Each wagon shouldn't be
 	//more than 1 character long, so we should be able to line them up
 	//nicely.
+	print("\033c")
 
 	for y := 0; y < my_list.Len(); y++ {
-		//val, _ := my_list.At(y)
+		val, _ := my_list.At(y)
+		r, c := val.(*wagon).getLocation()
 
-		//r, c := val.(*wagon).getLocation()
-
+	print("\033[" + Itoa(r) + ";" + Itoa(c) + "H" + val.(*wagon).getName())
 		//print using ANSI
 	}
 
+	print("\033[21;0H ")
 	//using ANSI, print enough lines so that there are "row" number of
 	//lines on the screen
 }

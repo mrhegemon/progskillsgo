@@ -1,11 +1,11 @@
 /*
 Authors: William Broza, Tym Lipari
-Matrix Testing program
+List testing program
 
-tests add and mult matrices
+tests linked list and and node testing
 
 usage:
-	matrix
+	list_test
 */
 package main
 
@@ -24,7 +24,6 @@ func main() {
 	}
 
 	setArgs()
-
 	toTest := new(list.LinkedList)
 
 	//Test 1: Empty List
