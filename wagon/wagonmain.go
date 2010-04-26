@@ -16,7 +16,7 @@ func main() {
 	var err os.Error
 
 	if len(os.Args) != 3 {
-		fmt.Println("USAGE:   wagon [rows] [cols]")
+		fmt.Println("USAGE: wagon [rows] [cols]")
 		os.Exit(-1)
 	} else {
 			if row, err = strconv.Atoi(os.Args[1]); err != nil {
@@ -28,10 +28,8 @@ func main() {
 					os.Exit(-1)
 			}
 	}
-	
-
 	//set up stty
-	_, err = os.ForkExec("/bin/stty", []string{"cbreak"}, os.Environ(), "", nil)
+	_, err = os.ForkExec("/bin/stty", []string{"stty", "cbreak"}, os.Environ(), "", nil)//exec.Run
 	if err != nil {
 		fmt.Println(err.String())
 		os.Exit(-1)
@@ -62,6 +60,15 @@ func main() {
 		charString = string(inp)
   		chars = []int(charString)
 	}
+	
+	fmt.Print("\033c")
+	//fix stty
+	_, err = os.ForkExec("/bin/stty", []string{"stty", "sane"}, os.Environ(), "", nil)
+	if err != nil {
+		fmt.Println(err.String())
+		os.Exit(-1)
+	}
+
 }
 
 
