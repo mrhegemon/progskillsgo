@@ -33,6 +33,8 @@ func (this *wagon) getLocation() (int, int) {
 	return this.x, this.y
 }
 
+//gets the previous location of this wagon
+//(1 location before its current location)
 func (this * wagon) getLastLocation() (int, int) {
 	return this.xOld, this.yOld
 }
@@ -81,7 +83,7 @@ func validMove(r, c int) bool {
 //initializes a new game
 func NewGame(r, c int) {
 	row, col = r, c
-	char = 97
+	char = 65
 	my_list = new(list.LinkedList)
 
 	Act('a')
@@ -131,6 +133,10 @@ func Act(command int) os.Error {
 //upDown(front up)
 //
 //returns: function error
+//front = front of train
+//!front = back of train
+//left = move left
+//!left = move right
 func upDown(front, up bool) func(interface{}, int) os.Error {
 	if front {
 		return func(val interface{}, index int) os.Error {
@@ -248,6 +254,8 @@ func leftRight(front, left bool) func(interface{}, int) os.Error {
 	}
 }
 
+//determines if the newly selected row and column are
+//already occupied
 func validator(nRow, nCol int) func(interface{}, int) os.Error {
 		return func(val interface{}, index int) os.Error {
 			wag := val.(*wagon)
