@@ -8,7 +8,7 @@ clean:
 	
 $(O):
 	mkdir $(O)
-	
+
 $(O)/rps-stdin: games.(O) rps-stdin.$(O)
 	$(O)l -o $(O)/rps-stdin -L . rps-stdin.$(O)
 

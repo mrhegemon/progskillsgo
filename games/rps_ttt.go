@@ -6,14 +6,16 @@ import "io"
 import "fmt"
 import "reflect"
 
-type RPSView struct {
+type GView struct {
 	inOut io.ReadWriter
 	name, other string
 	refComm chan string
 }
 
-func NewRPSView(inout io.ReadWriter, n string, ref chan string) *RPSView {
-	view := new(RPSView)
+bool gametype = false; //false for RPS, True for TTT
+
+func NewGView(inout io.ReadWriter, n string, ref chan string) *RPSView {
+	view := new(GView)
 	view.inOut = inout
 	view.name = n
 	view.other = ""
@@ -21,18 +23,18 @@ func NewRPSView(inout io.ReadWriter, n string, ref chan string) *RPSView {
 	return view
 }
 
-func (this *RPSView) Enable() {
+func (this *GView) Enable() {
 	text := ([]byte) (this.name + "'s move (r, p, s):  ")
 	if _, err := this.inOut.Write(text); err != nil {
 		fmt.Fprintln(os.Stderr, "Error Writing To Stream (" + this.name + ")")
 	}
 }
 
-func(this *RPSView) Set(move interface{}) {
+func(this *GView) Set(move interface{}) {
 	this.other = move.(string)
 }
 
-func(this *RPSView) Get() interface{} {
+func(this *GView) Get() interface{} {
 	return nil
 	/*buffer := make([]byte, 2048)
 	tempString := ""
@@ -47,7 +49,8 @@ func(this *RPSView) Get() interface{} {
 	return tempString
 }*/
 }
-func (this *RPSView) Loop() os.Error {
+
+func (this *GView) Loop() os.Error {
 	done := false
 	for !done {
 		command := <- this.refComm
@@ -69,7 +72,7 @@ func (this *RPSView) Loop() os.Error {
 }
 			
 func main() {
-	view := NewRPSView(os.Stdout, "A")
+	view := NewGView(os.Stdout, "A")
 	go view.Loop()
 	//println(view.Get().(string))
 }
