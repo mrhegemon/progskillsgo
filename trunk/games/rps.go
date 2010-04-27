@@ -35,19 +35,19 @@ func(this *GView) Set(move interface{}) {
 }
 
 func(this *GView) Get() interface{} {
+if this == nil {
 	return nil
-	/*buffer := make([]byte, 2048)
-	tempString := ""
-	
-	n, _ := inOut.Read(buffer)
-	for {
-		if n <= 0 { break; }
-		tempString = tempString + ((string)buffer[0:n])
-		n, _ = inOut.Read(buffer)
+) else {
+	buffer := make([]byte, 2048)
+		tempString := ""
+		n, _ := inOut.Read(buffer)
+		for {
+			if n <= 0 { break; }
+			tempString = tempString + ((string)buffer[0:n])
+			n, _ = inOut.Read(buffer)
+		}
+		return tempString
 	}
-	
-	return tempString
-}*/
 }
 
 func (this *GView) Loop() os.Error {
