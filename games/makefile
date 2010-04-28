@@ -27,3 +27,6 @@ rps-stdin.$(O):	games.$(O) view.$(O) rps.go
 ttt-stdin.$(O):	games.$(O) view.$(O) ttt.go
 	$(O)g -o ttt-stdin.$(O) -I . ttt.go
 
+test:	all
+	$(O)/rps-stdin
+	$(O)/ttt-stdin
