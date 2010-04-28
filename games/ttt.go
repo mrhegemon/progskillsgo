@@ -1,3 +1,14 @@
+/*
+Authors: William Broza, Tym Lipari
+Matrix Testing program
+
+Written in a pattern of serial turn taking.  TTT must extend asymmetrically when
+using channels over a network.
+
+usage:
+	matrix
+*/
+
 package main
 
 //import "games"
@@ -12,7 +23,7 @@ type GView struct {
 	refComm chan string
 }
 
-bool gametype = false; //false for RPS, True for TTT
+//bool gametype = false; //false for RPS, True for TTT
 
 func NewGView(inout io.ReadWriter, n string, ref chan string) *RPSView {
 	view := new(GView)
