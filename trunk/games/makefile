@@ -5,7 +5,7 @@ all:	$(O) $(O)/rps-stdin
 clean:
 	rm -rf [568vq] *.[586vq]
 	rm *~
-	
+
 $(O):
 	mkdir $(O)
 
