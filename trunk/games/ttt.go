@@ -15,7 +15,6 @@ package main
 import "os"
 import "io"
 import "fmt"
-import "reflect"
 
 type GView struct {
 	inOut io.ReadWriter
@@ -25,7 +24,7 @@ type GView struct {
 
 //bool gametype = false; //false for RPS, True for TTT
 
-func NewGView(inout io.ReadWriter, n string, ref chan string) *RPSView {
+func NewGView(inout io.ReadWriter, n string, ref chan string) *GView {
 	view := new(GView)
 	view.inOut = inout
 	view.name = n
@@ -48,17 +47,19 @@ func(this *GView) Set(move interface{}) {
 func(this *GView) Get() interface{} {
 if this == nil {
 	return nil
-) else {
+} else {
 	buffer := make([]byte, 2048)
 		tempString := ""
-		n, _ := inOut.Read(buffer)
+		n, _ := this.inOut.Read(buffer)
 		for {
-			if n <= 0 { break; }
-			tempString = tempString + ((string)buffer[0:n])
-			n, _ = inOut.Read(buffer)
+			if n <= 0 { return tempString }
+			temp := (string) (buffer[0:n])
+			tempString = tempString + temp
+			n, _ = this.inOut.Read(buffer)
 		}
 		return tempString
 	}
+return ""
 }
 
 func (this *GView) Loop() os.Error {
@@ -69,10 +70,11 @@ func (this *GView) Loop() os.Error {
 		case "enable": this.Enable()
 		case "get": {
 			val := this.Get()
-			switch reflect.Typeof(val){ 
+			switch val.(string) { 
 			//is an os.Error
-			case *reflect.StructType: return val
-			case *reflect.StringType: this.refComm <- val.(string)
+			case "ICLOSED": return os.NewError("Input stream has been closed")
+			case "OCLOSED": return os.NewError("Output stream has been closed")
+			default: this.refComm <- val.(string)
 			}
 		}
 		case "display": this.Display()
@@ -81,9 +83,14 @@ func (this *GView) Loop() os.Error {
 	}
 	return nil
 }
+
+func(this *GView) Display() {
+	//display opponent's move
+}
 			
 func main() {
-	view := NewGView(os.Stdout, "A")
+	commChan := make(chan string)
+	view := NewGView(os.Stdout, "A", commChan)
 	go view.Loop()
 	//println(view.Get().(string))
 }
