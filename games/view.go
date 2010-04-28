@@ -9,12 +9,13 @@ usage:
 	matrix
 */
 
-package main
+package view
 
-//import "games"
+import "games"
 import "os"
 import "io"
 import "fmt"
+import "strconv"
 
 type GView struct {
 	inOut io.ReadWriter
@@ -34,13 +35,12 @@ func NewGView(inout io.ReadWriter, n, dir string, ref chan string) *GView {
 	view.name = n
 	view.other = ""
 	view.refComm = ref
-	view.instr = ""
 	view.directions = dir
 	return view
 }
 
 func (this *GView) Enable() {
-	text := ([]byte) (instr)
+	text := ([]byte) (this.name + "'s move (" + this.directions + "):  ")
 	if _, err := this.inOut.Write(text); err != nil {
 		fmt.Fprintln(os.Stderr, "Error Writing To Stream (" + this.name + ")")
 	}
@@ -58,9 +58,9 @@ if this == nil {
 		tempString := ""
 		n, _ := this.inOut.Read(buffer)
 		for {
-			if n <= 0 { return tempString }
 			temp := (string) (buffer[0:n])
 			tempString = tempString + temp
+			if n < 2048 { return tempString }
 			n, _ = this.inOut.Read(buffer)
 		}
 		return tempString
@@ -78,19 +78,26 @@ func (this *GView) Loop() os.Error {
 			val := this.Get()
 			switch val.(string) { 
 			//is an os.Error
-			case "ICLOSED": return os.NewError("Input stream has been closed")
-			case "OCLOSED": return os.NewError("Output stream has been closed")
+			case "ICLOSED": {
+				this.refComm <- "q"
+				return os.NewError("Input stream has been closed")
+			}
+			case "OCLOSED": {
+				this.refComm <- "q"
+				return os.NewError("Output stream has been closed")
+			}
 			default: this.refComm <- val.(string)
 			}
 		}
 		case "other": this.Set(<- this.refComm)
 		case "display": this.Display()
 		case "result":{
-			val := this.refComm
+			val := <- this.refComm
 			intVal, _ := strconv.Atoi(val)
-			this.Done(intVal)
+			this.Done(games.Outcome(intVal))
 		}
 		case "quit": done = true
+	}
 	}
 	return nil
 }
@@ -99,44 +106,12 @@ func(this *GView) Display() {
 	this.inOut.Write(([]byte) (this.other))
 }
 
-func(this *GView) Done(youWin game.Outcome) {
-	if youWin == game.Win {
-		this.inOut.Write(([]byte) (this.name + " won."))
-	} else if youWin == game.Draw {
-		this.inOut.Write(([]byte) ("There was a tie."))
+func(this *GView) Done(youWin games.Outcome) {
+	if youWin == games.Win {
+		this.inOut.Write(([]byte) (this.name + " won.\n"))
+	} else if youWin == games.Draw {
+		this.inOut.Write(([]byte) ("There was a tie.\n"))
 	} else {
-		this.inOut.Write(([]byte) (this.name + " lost."))
+		this.inOut.Write(([]byte) (this.name + " lost.\n"))
 	}
-}
-
-//RPS game logic
-
-const( 	R = 1
-	P = 2
-	S = 3
-	)
-
-//winMove is true if x wins
-bool tieMove = false
-bool winMove = false
-
-if [x] == [o] {
-	tieMove = true
-} else {
-	if [o] == R && [x] == P {
-		winMove == ture
-	} if [o] == P && [x] == S {
-		winMove == ture
-	} if [o] == S && [x] == R {
-		winMove == ture
-	}
-}
-
-		}
-	}
-	return nil
-}
-
-func(this *GView) Display() {
-	//display opponent's move
 }
