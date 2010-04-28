@@ -1,10 +1,6 @@
-                                                                     
-                                                                     
-                                                                     
-                                             
 /*
 Authors: William Broza, Tym Lipari
-Tick Tack Toe game
+Tic Tac Toe game
 
 Written in a pattern of serial turn taking.  TTT must extend 
 asymmetrically when using channels over a network.
