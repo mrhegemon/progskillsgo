@@ -9,36 +9,14 @@ usage:
 	rps-stdin [terminal]
 */
 
-package main
+package rps
 
 import "games"
-import "os"
 //import "io"
 import "strconv"
-import "view"
 import "strings"
 			
-func main() {
-
-	term := os.Stdin
-	var err os.Error
-	
-	println(strconv.Itoa(len(os.Args)))
-	if len(os.Args) > 1 {
-		term, err = os.Open(os.Args[1], os.O_RDWR, 511)
-		if err != nil { term = os.Stdin }
-	}
-	
-	aComm := make(chan string)
-	bComm := make(chan string)
-	
-	//investigate adding quit. right now, it crashes
-	//because all the goroutines are asleep.
-	a := view.NewGView(os.Stdin, "A", "r, p, s", aComm)
-	b := view.NewGView(term, "B", "r, p, s", bComm)
-	
-	go a.Loop()
-	go b.Loop()
+func Ref(aComm, bComm chan string) {
 	
 	stillPlaying := true
 	
@@ -68,8 +46,8 @@ func main() {
 			aComm <- "result"
 			bComm <- "result"
 			
-			aResult := strconv.Itoa((int) (winner(aMove, bMove))) + "\n"
-			bResult := strconv.Itoa((int) (winner(bMove, aMove))) + "\n"
+			aResult := strconv.Itoa((int) (winner(aMove, bMove)))
+			bResult := strconv.Itoa((int) (winner(bMove, aMove)))	
 			
 			aComm <- aResult
 			bComm <- bResult
