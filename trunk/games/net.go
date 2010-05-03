@@ -27,18 +27,19 @@ func main() {
 			println(err.String())
 			os.Exit(-1)
 		}
-		val.Export("B", bComm, netchan.Send, bComm)
+		val.Export("B", bComm, netchan.Send, new(string))
 
 		if flag.NArg() == 1 {
 			aView := view.NewGView(os.Stdin, "A", "r, p, s", *aComm)
 			go aView.Loop()
 		} else {
+			println("gonna import A")
 			a, err := netchan.NewImporter("tcp", flag.Arg(1))
 			if err != nil {
 				println(err.String())
 				os.Exit(-1)
 			}
-			a.Import("A", aComm, netchan.Recv, aComm)
+			a.Import("A", aComm, netchan.Recv, new(string))
 		}
 		rps.Ref(*aComm, *bComm)
 	} else {   //client mode
@@ -49,9 +50,10 @@ func main() {
 			println(err.String())
 			os.Exit(-1)
 		}
-		imp.Import("B", myChan, netchan.Recv, myChan)
+		imp.Import("B", myChan, netchan.Recv, new(string))
 
 		myView := view.NewGView(os.Stdin, "B", "r, p, s", myChan)
 		go myView.Loop()
+		for { }
 	}
 }
