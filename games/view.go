@@ -74,6 +74,10 @@ func (this *GView) Loop() os.Error {
 		command := <- this.refComm
 		switch command {
 		case "enable": this.Enable()
+		case "name": {
+			nname := <- this.refComm
+			this.name = nname
+		}
 		case "get": {
 			val := this.Get()
 			switch val.(string) { 
