@@ -9,13 +9,12 @@ usage:
 	ttt-stdin [terminal]
 */
 
-package main
+package ttt
 
 import "games"
 import "os"
 //import "io"
 import "strconv"
-import "view"
 import "strings"
 import "container/vector"
 			
@@ -26,26 +25,7 @@ var (
 	full int = 0
 )
 
-func main() {
-
-	term := os.Stdin
-	var err os.Error
-
-	if len(os.Args) > 1 {
-		term, err = os.Open(os.Args[1], os.O_RDWR, 511)
-		if err != nil { term = os.Stdin }
-	}
-	
-	aComm := make(chan string)
-	bComm := make(chan string)
-	
-	//investigate adding quit. right now, it crashes
-	//because all the goroutines are asleep.
-	a := view.NewGView(os.Stdin, "A", "Directions: Ex: nw, s, c ", aComm)
-	b := view.NewGView(term, "B", "Directions: Ex: nw, s, c ", bComm)
-	
-	go a.Loop()
-	go b.Loop()
+func Ref(aComm, bComm chan string) {
 	for {
 		stillPlaying := true
 	

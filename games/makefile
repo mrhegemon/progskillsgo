@@ -12,8 +12,8 @@ $(O):
 $(O)/rps-stdin:	 rps-main.$(O)
 	$(O)l -o $(O)/rps-stdin -L . rps-main.$(O)
 
-$(O)/ttt-stdin:  ttt-stdin.$(O)
-	$(O)l -o $(O)/ttt-stdin -L . ttt-stdin.$(O)
+$(O)/ttt-stdin:  ttt-main.$(O)
+	$(O)l -o $(O)/ttt-stdin -L . ttt-main.$(O)
 
 $(O)/rps-net:	net.$(O)
 	$(O)l -o $(O)/rps-net -L . net.$(O)
@@ -33,8 +33,11 @@ view.$(O):	games.$(O)
 rps.$(O):	rps.go games.$(O)
 	$(O)g -I . rps.go
 
-ttt-stdin.$(O):	games.$(O) view.$(O) ttt.go
-	$(O)g -o ttt-stdin.$(O) -I . ttt.go
+ttt-main.$(O): view.$(O) ttt.$(O) ttt-main.go
+	$(O)g -o ttt-main.$(O) -I . ttt-main.go
+
+ttt.$(O):	ttt.go games.$(O)
+	$(O)g -I . ttt.go
 
 
 test:	all
