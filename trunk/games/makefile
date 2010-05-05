@@ -36,7 +36,7 @@ rps-main-ai.$(O):	view.$(O) rps.$(O) ai.$(O) rps-main-ai.go
 ai.$(O):	games.$(O) ai.go
 	$(O)g -I . ai.go
 	
-view.$(O):	games.$(O)
+view.$(O):	games.$(O) sstruct.$(O)
 	$(O)g -I . view.go
 
 rps.$(O):	rps.go games.$(O)
@@ -47,6 +47,9 @@ ttt-main.$(O): view.$(O) ttt.$(O) ttt-main.go
 
 ttt.$(O):	ttt.go games.$(O)
 	$(O)g -I . ttt.go
+
+sstruct.$(O):	sstruct.go
+	$(O)g sstruct.go
 
 
 test:	all
