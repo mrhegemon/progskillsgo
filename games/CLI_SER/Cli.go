@@ -9,7 +9,7 @@ import (
 func main() {
 	ch := make(chan string)
 
-	ex, err := netchan.NewExporter("tcp", ":0") 	
+	ex, err := netchan.NewExporter("tcp", ":4567") 	
 	if err != nil {
  		println("exportSend:" + err.String())
  		os.Exit(0)
