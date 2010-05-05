@@ -11,9 +11,10 @@ usage:
 package main
 
 import ("flag"; "os"; "view"; "rps"; "netchan")
+import . "sstruct"
 
 func main() {
-	var server *bool = flag.Bool("s", true, "server mode")
+	var server *bool = flag.Bool("c", false, "client mode")
 	var usage *bool = flag.Bool("x", false, "print usage")
 	
 	flag.Parse()
@@ -27,40 +28,48 @@ func main() {
 		//print usage
 		os.Exit(-1);
 	} else if *server {  //server mode
-		aTemp := make(chan string)
-		bTemp := make(chan string)
+		aTemp := make(chan StringStruct)
+		bTemp1 := make(chan StringStruct)
+		bTemp2 := make(chan StringStruct)
 		aComm := &aTemp
-		bComm := &bTemp
+		bIn := &bTemp1
+		bOut := &bTemp2
 		
 		val, err := netchan.NewExporter("tcp", flag.Arg(0))
 		if err != nil {
 			println(err.String())
 			os.Exit(-1)
 		}
-		val.Export("B", bComm, netchan.Send, new(string))
+		err2 := val.Export("BOut", bOut, netchan.Send, new(StringStruct))
 
-		if flag.NArg() == 1 {
-			aView := view.NewGView(os.Stdin, "A", "r, p, s", *aComm)
-			go aView.Loop()
-		} else {
-			println("gonna import A")
-			a, err := netchan.NewImporter("tcp", flag.Arg(1))
-			if err != nil {
-				println(err.String())
-				os.Exit(-1)
-			}
-			a.Import("A", aComm, netchan.Recv, new(string))
+		val2, err3 := netchan.NewImporter("tcp", flag.Arg(1))
+		if err3 != nil {
+			println(err3.String())
+			os.Exit(-1)
 		}
+		err4 := netchan.Import("BIn", bIn, netchan.Recv, new(StringStruct))
+
+		aView := view.NewGView(os.Stdin, "A", "r, p, s", *aComm, *aComm)
+		go aView.Loop()
 		rps.Ref(*aComm, *bComm)
 	} else {   //client mode
-		myChan := make(chan string)
+		iChan := make(chan StringStruct)
+		oChan := make(chan StringStruct)
+		
 
 		imp, err := netchan.NewImporter("tcp", flag.Arg(0))
 		if err != nil {
 			println(err.String())
 			os.Exit(-1)
 		}
-		imp.Import("B", myChan, netchan.Recv, new(string))
+		imp.Import("BIn", iChan, netchan.Recv, new(StringStruct))
+
+		exp, err3 := netchan.NewExporter("tcp", flag.Arg(0))
+		if err3 != nil {
+			println(err3.String())
+			os.Exit(-1)
+		}
+		exp.Export("BOut", oChan, netchan.Send, new(StringStruct))
 
 		myView := view.NewGView(os.Stdin, "B", "r, p, s", myChan)
 		go myView.Loop()
