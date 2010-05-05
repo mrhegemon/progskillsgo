@@ -7,6 +7,7 @@ package netchan
 import (
     "fmt"
     "testing"
+    "netchan"
 )
 
 type value struct {

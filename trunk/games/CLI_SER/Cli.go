@@ -14,6 +14,7 @@ func main() {
  		println("exportSend:" + err.String())
  		os.Exit(0)
  	}
+ 	
   err2 := ex.Export("CliExp", ch, netchan.Send, new(string))
  	if err2 != nil {
  		println("exportSend:" + err2.String())
