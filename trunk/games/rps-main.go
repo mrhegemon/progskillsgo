@@ -12,7 +12,7 @@ usage:
 package main
 
 import ("rps"; "os"; "view")
-import . "sstruct"
+import . "sstring"
 
 func main() {
 	term := os.Stdin
@@ -24,7 +24,7 @@ func main() {
 	}
 	
 	aComm := make(chan StringStruct)
-	bComm := make(chan StringStruct)
+	bComm := make(chan string)
 	
 	//investigate adding quit. right now, it crashes
 	//because all the goroutines are asleep.
