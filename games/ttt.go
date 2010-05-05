@@ -13,7 +13,7 @@ package ttt
 
 import "games"
 import "os"
-//import "io"
+import . "sstruct"
 import "strconv"
 import "strings"
 import "container/vector"
@@ -25,7 +25,7 @@ var (
 	full int = 0
 )
 
-func Ref(aComm, bComm chan string) {
+func Ref(aComm, bComm chan StringStruct) {
 	for {
 		stillPlaying := true
 	
@@ -43,20 +43,20 @@ func Ref(aComm, bComm chan string) {
 	
 		for stillPlaying {
 	
-			AMOVE: aComm <- "enable"
-			aComm <- "get"
+			AMOVE: aComm <- Make("enable")
+			aComm <- Make("get")
 	
-			aMove := strings.TrimSpace(<- aComm)
-			if aMove == "q" { bComm <- "quit" }
+			aMove := Make(strings.TrimSpace(<- aComm))
+			if aMove.S == "q" { bComm <- Make("quit") }
 	
-			if setGame(aMove, "A") != nil {
+			if setGame(aMove.S, "A") != nil {
 				//tell A it's move was bad
 				//GO BACK and repeat A's move
 				goto AMOVE
 			}
-			bComm <- "other"
-			bComm <- "A's move:  " + aMove + "\n"
-			bComm <- "display"
+			bComm <- Make("other")
+			bComm <- Make("A's move:  " + aMove + "\n")
+			bComm <- Make("display")
 	
 			//check for win state
 			winA := winner("A")
@@ -76,23 +76,23 @@ func Ref(aComm, bComm chan string) {
 			}
 	
 			if stillPlaying {
-				BMOVE: bComm <- "enable"
+				BMOVE: bComm <- Make("enable")
 	
-				bComm <- "get"
+				bComm <- Make("get")
 			
 				bMove := strings.TrimSpace(<- bComm) 
-				if bMove == "q" { aComm <- "quit" }
+				if bMove.S == "q" { aComm <- "quit" }
 			
-				if setGame(bMove, "B") != nil {
+				if setGame(bMove.S, "B") != nil {
 					//tell B it's move was bad
 					//GO BACK and repeat B's move
 					goto BMOVE
 				}
 	
-				aComm <- "other"
-				aComm <- "B's move:  " + bMove + "\n"
+				aComm <- Make("other")
+				aComm <- Make("B's move:  " + bMove + "\n")
 	
-				aComm <- "display"
+				aComm <- Make"display")
 	
 				//check for win state
 				winA := winner("A")
@@ -113,10 +113,10 @@ func Ref(aComm, bComm chan string) {
 			}	
 		}
 	
-		aComm <- "result"
-		bComm <- "result"
-		aComm <- resA
-		bComm <- resB
+		aComm <- Make("result")
+		bComm <- Make("result")
+		aComm <- Make(resA)
+		bComm <- Make(resB)
 	}
 }
 

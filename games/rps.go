@@ -12,42 +12,42 @@ usage:
 package rps
 
 import "games"
-//import "io"
+import . "sstruct"
 import "strconv"
 import "strings"
 			
-func Ref(aComm, bComm chan string) {
+func Ref(aComm, bComm chan StringStruct) {
 	
 	stillPlaying := true
 	
 	for stillPlaying {
-		aComm <- "enable"
-		bComm <- "enable"
+		aComm <- Make("enable")
+		bComm <- Make("enable")
 		
-		aComm <- "get"
-		bComm <- "get"
+		aComm <- Make("get")
+		bComm <- Make("get")
 		
-		aMove := strings.TrimSpace(<- aComm)
-		if aMove == "q" { bComm <- "quit" }
+		var aMove := Make(strings.TrimSpace((<- aComm).S))
+		if aMove.S == "q" { bComm <- Make("quit") }
 		
-		bMove := strings.TrimSpace(<- bComm) 
-		if bMove == "q" { aComm <- "quit" }
+		var bMove := Make(strings.TrimSpace((<- bComm).S)) 
+		if bMove.S == "q" { aComm <- Make("quit") }
 		
 		if stillPlaying {
-			aComm <- "other"
-			bComm <- "other"
+			aComm <- Make("other")
+			bComm <- Make("other")
 		
-			aComm <- "B's move:  " + bMove + "\n"
-			bComm <- "A's move:  " + aMove + "\n"
+			aComm <- Make("B's move:  " + bMove + "\n")
+			bComm <- Make("A's move:  " + aMove + "\n")
 		
-			aComm <- "display"
-			bComm <- "display"
+			aComm <- Make("display")
+			bComm <- Make("display")
 			
-			aComm <- "result"
-			bComm <- "result"
+			aComm <- Make("result")
+			bComm <- Make("result")
 			
-			aResult := strconv.Itoa((int) (winner(aMove, bMove)))
-			bResult := strconv.Itoa((int) (winner(bMove, aMove)))	
+			aResult := Make(strconv.Itoa((int) (winner(aMove.S, bMove.S))))
+			bResult := Make(strconv.Itoa((int) (winner(bMove.S, aMove.S))))	
 			
 			aComm <- aResult
 			bComm <- bResult

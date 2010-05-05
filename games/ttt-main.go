@@ -11,6 +11,7 @@ usage:
 package main
 
 import ("ttt"; "os"; "view")
+import . "sstruct"
 
 func main() {
 	term := os.Stdin
@@ -21,11 +22,11 @@ func main() {
 		if err != nil { term = os.Stdin }
 	}
 	
-	aComm := make(chan string)
-	bComm := make(chan string)
+	aComm := make(chan StringStruct)
+	bComm := make(chan StringStruct)
 	
-	a := view.NewGView(os.Stdin, "A", "n, s, e, w, c, nw, ne, sw, se", aComm)
-	b := view.NewGView(term, "B", "n, s, e, w, c, nw, ne, sw, se", bComm)
+	a := view.NewGView(os.Stdin, "A", "n, s, e, w, c, nw, ne, sw, se", aComm, aComm)
+	b := view.NewGView(term, "B", "n, s, e, w, c, nw, ne, sw, se", bComm, bComm)
 	
 	go a.Loop()
 	go b.Loop()

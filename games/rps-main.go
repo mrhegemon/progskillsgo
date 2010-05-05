@@ -12,6 +12,7 @@ usage:
 package main
 
 import ("rps"; "os"; "view")
+import . "sstruct"
 
 func main() {
 	term := os.Stdin
@@ -22,13 +23,13 @@ func main() {
 		if err != nil { term = os.Stdin }
 	}
 	
-	aComm := make(chan string)
-	bComm := make(chan string)
+	aComm := make(chan StringStruct)
+	bComm := make(chan StringStruct)
 	
 	//investigate adding quit. right now, it crashes
 	//because all the goroutines are asleep.
-	a := view.NewGView(os.Stdin, "A", "r, p, s", aComm)
-	b := view.NewGView(term, "B", "r, p, s", bComm)
+	a := view.NewGView(os.Stdin, "A", "r, p, s", aComm, aComm)
+	b := view.NewGView(term, "B", "r, p, s", bComm, bComm)
 	
 	go a.Loop()
 	go b.Loop()
