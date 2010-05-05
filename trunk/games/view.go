@@ -11,6 +11,7 @@ usage:
 
 package view
 
+import . "sstruct"
 import "games"
 import "os"
 import "io"
@@ -20,7 +21,7 @@ import "strconv"
 type GView struct {
 	inOut io.ReadWriter
 	name, other string
-	refComm chan string
+	irefComm, orefComm chan StringStruct
 	instr chan string
 	directions string
 }
@@ -29,12 +30,13 @@ type GView struct {
 //n = this view's name
 //dir = the directions for this game
 //ref = the channel that Loop() will communicate with
-func NewGView(inout io.ReadWriter, n, dir string, ref chan string) *GView {
+func NewGView(inout io.ReadWriter, n, dir string, iref, oref chan StringStruct) *GView {
 	view := new(GView)
 	view.inOut = inout
 	view.name = n
 	view.other = ""
-	view.refComm = ref
+	view.irefComm = iref
+	view.orefComm = oref
 	view.directions = dir
 	return view
 }
@@ -71,11 +73,11 @@ return ""
 func (this *GView) Loop() os.Error {
 	done := false
 	for !done {
-		command := <- this.refComm
+		command := (<- this.irefComm).S
 		switch command {
 		case "enable": this.Enable()
 		case "name": {
-			nname := <- this.refComm
+			nname := (<- this.irefComm).S
 			this.name = nname
 		}
 		case "get": {
@@ -83,20 +85,27 @@ func (this *GView) Loop() os.Error {
 			switch val.(string) { 
 			//is an os.Error
 			case "ICLOSED": {
-				this.refComm <- "q"
+				var out StringStruct
+				out.S = "q"
+				this.orefComm <- out
 				return os.NewError("Input stream has been closed")
 			}
 			case "OCLOSED": {
-				this.refComm <- "q"
+				var out StringStruct
+				out.S = "q"
+				this.orefComm <- out
 				return os.NewError("Output stream has been closed")
 			}
-			default: this.refComm <- val.(string)
+			default: 
+				var out StringStruct
+				out.S = val.(string) 
+				this.orefComm <- out
 			}
 		}
-		case "other": this.Set(<- this.refComm)
+		case "other": this.Set((<- this.irefComm).S)
 		case "display": this.Display()
 		case "result":{
-			val := <- this.refComm
+			val := (<- this.irefComm).S
 			intVal, _ := strconv.Atoi(val)
 			this.Done(games.Outcome(intVal))
 		}
