@@ -28,51 +28,58 @@ func main() {
 		//print usage
 		os.Exit(-1);
 	} else if *server {  //server mode
-		aTemp := make(chan StringStruct)
-		bTemp1 := make(chan StringStruct)
-		bTemp2 := make(chan StringStruct)
-		aComm := &aTemp
-		bIn := &bTemp1
-		bOut := &bTemp2
-		
-		val, err := netchan.NewExporter("tcp", flag.Arg(0))
-		if err != nil {
-			println(err.String())
-			os.Exit(-1)
-		}
-		err2 := val.Export("BOut", bOut, netchan.Send, new(StringStruct))
+		aComm := make(chan StringStruct)
+		bIn := make(chan StringStruct)
+		bOut := make(chan StringStruct)
 
-		val2, err3 := netchan.NewImporter("tcp", flag.Arg(1))
-		if err3 != nil {
-			println(err3.String())
-			os.Exit(-1)
+		err := os.NewError("Not Nil")
+		val := new(netchan.Exporter)
+		for err != nil {
+			val, err = netchan.NewExporter("tcp", flag.Arg(0))
+			//errchk(err)
 		}
-		err4 := netchan.Import("BIn", bIn, netchan.Recv, new(StringStruct))
+		errchk(val.Export("BOut", &bOut, netchan.Send, new(StringStruct)))
 
-		aView := view.NewGView(os.Stdin, "A", "r, p, s", *aComm, *aComm)
+		imp := new(netchan.Importer)
+		err = os.NewError("Not Nil")
+		for err != nil {
+			imp, err = netchan.NewImporter("tcp", flag.Arg(1))
+			//errchk(err2)
+		}
+		errchk(imp.Import("BIn", &bIn, netchan.Recv, new(StringStruct)))
+
+		aView := view.NewGView(os.Stdin, "A", "r, p, s", aComm, aComm)
 		go aView.Loop()
-		rps.Ref(*aComm, *bComm)
-	} else {   //client mode
+		
+		rps.Ref(aComm, aComm, bIn, bOut)
+	} else {   //client model
 		iChan := make(chan StringStruct)
 		oChan := make(chan StringStruct)
+
+		imp := new(netchan.Importer)
+		err := os.NewError("Not Nil")
+		for err != nil {
+			imp, err = netchan.NewImporter("tcp", flag.Arg(0))
+			//errchk(err)
+		}
+		errchk(imp.Import("BOut", &oChan, netchan.Recv, new(StringStruct)))
 		
-
-		imp, err := netchan.NewImporter("tcp", flag.Arg(0))
-		if err != nil {
-			println(err.String())
-			os.Exit(-1)
+		exp := new(netchan.Exporter)
+		err = os.NewError("Not Nil")
+		for err != nil {
+			exp, err = netchan.NewExporter("tcp", flag.Arg(1))
+			//errchk(err2)
 		}
-		imp.Import("BIn", iChan, netchan.Recv, new(StringStruct))
+		errchk(exp.Export("BIn", &iChan, netchan.Send, new(StringStruct)))
 
-		exp, err3 := netchan.NewExporter("tcp", flag.Arg(0))
-		if err3 != nil {
-			println(err3.String())
-			os.Exit(-1)
-		}
-		exp.Export("BOut", oChan, netchan.Send, new(StringStruct))
-
-		myView := view.NewGView(os.Stdin, "B", "r, p, s", myChan)
+		myView := view.NewGView(os.Stdin, "B", "r, p, s", iChan, oChan)
 		go myView.Loop()
 		for { }
+	}
+}
+func errchk(err os.Error) {
+	if err != nil {
+		println(err.String())
+		os.Exit(-1)
 	}
 }

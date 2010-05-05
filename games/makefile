@@ -1,6 +1,6 @@
 include $(GOROOT)/src/Make.$(GOARCH)
 
-all:	$(O) $(O)/rps-stdin $(O)/ttt-stdin $(O)/rps-net $(O)/rps-stdin-ai
+all:	$(O) $(O)/rps-net #$(O)/rps-stdin $(O)/ttt-stdin $(O)/rps-net $(O)/rps-stdin-ai
 
 clean:
 	rm -rf [568vq] *.[586vq]
@@ -39,7 +39,7 @@ ai.$(O):	games.$(O) ai.go
 view.$(O):	games.$(O) sstruct.$(O)
 	$(O)g -I . view.go
 
-rps.$(O):	rps.go games.$(O)
+rps.$(O):	rps.go games.$(O) sstruct.$(O)
 	$(O)g -I . rps.go
 
 ttt-main.$(O): view.$(O) ttt.$(O) ttt-main.go

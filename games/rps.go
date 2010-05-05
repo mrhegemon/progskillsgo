@@ -15,42 +15,43 @@ import "games"
 import . "sstruct"
 import "strconv"
 import "strings"
+import . "sstruct"
 			
-func Ref(aComm, bComm chan StringStruct) {
+func Ref(aIn, aOut, bIn, bOut chan StringStruct) {
 	
 	stillPlaying := true
 	
 	for stillPlaying {
-		aComm <- Make("enable")
-		bComm <- Make("enable")
+		aIn <- Make("enable")
+		bIn <- Make("enable")
 		
-		aComm <- Make("get")
-		bComm <- Make("get")
+		aIn <- Make("get")
+		bIn <- Make("get")
 		
-		var aMove := Make(strings.TrimSpace((<- aComm).S))
-		if aMove.S == "q" { bComm <- Make("quit") }
+		aMove := strings.TrimSpace((<- aOut).S)
+		if aMove == "q" { bOut <- Make("quit") }
 		
-		var bMove := Make(strings.TrimSpace((<- bComm).S)) 
-		if bMove.S == "q" { aComm <- Make("quit") }
+		bMove := strings.TrimSpace((<- bOut).S) 
+		if bMove == "q" { aIn <- Make("quit") }
 		
 		if stillPlaying {
-			aComm <- Make("other")
-			bComm <- Make("other")
+			aIn <- Make("other")
+			bIn <- Make("other")
 		
-			aComm <- Make("B's move:  " + bMove + "\n")
-			bComm <- Make("A's move:  " + aMove + "\n")
+			aIn <- Make("B's move:  " + bMove + "\n")
+			bIn <- Make("A's move:  " + aMove + "\n")
 		
-			aComm <- Make("display")
-			bComm <- Make("display")
+			aIn <- Make("display")
+			bIn <- Make("display")
 			
-			aComm <- Make("result")
-			bComm <- Make("result")
+			aIn <- Make("result")
+			bIn <- Make("result")
 			
 			aResult := Make(strconv.Itoa((int) (winner(aMove.S, bMove.S))))
 			bResult := Make(strconv.Itoa((int) (winner(bMove.S, aMove.S))))	
 			
-			aComm <- aResult
-			bComm <- bResult
+			aIn <- Make(aResult)
+			bIn <- Make(bResult)
 		}
 	}
 }
