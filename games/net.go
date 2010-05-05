@@ -1,3 +1,13 @@
+/*
+Authors: William Broza, Tym Lipari
+Rock Paper Scissors game
+
+Written in a pattern of serial turn taking.  TTT must extend 
+asymmetrically when using channels over a network.
+
+usage:
+	rps-stdin [terminal]
+*/
 package main
 
 import ("flag"; "os"; "view"; "rps"; "netchan")
