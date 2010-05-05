@@ -24,8 +24,6 @@ func main() {
 	aComm := make(chan string)
 	bComm := make(chan string)
 	
-	//investigate adding quit. right now, it crashes
-	//because all the goroutines are asleep.
 	a := view.NewGView(os.Stdin, "A", "n, s, e, w, c, nw, ne, sw, se", aComm)
 	b := view.NewGView(term, "B", "n, s, e, w, c, nw, ne, sw, se", bComm)
 	

@@ -6,28 +6,46 @@ import (
     "os"
 )
 
-func main() {
-	ch := make(chan string)
+type stringStruct struct {
+	s string
+}
 
-	ex, err := netchan.NewExporter("tcp", ":4567") 	
+func main() {
+	ch := make(chan stringStruct)
+
+	im, err := netchan.NewImporter("tcp", ":4567")
+	err2 := im.Import("CliExp", ch, netchan.Recv, new(stringStruct))
+	
 	if err != nil {
- 		println("exportSend:" + err.String())
- 		os.Exit(0)
- 	}
- 	
-  err2 := ex.Export("CliExp", ch, netchan.Send, new(string))
- 	if err2 != nil {
- 		println("exportSend:" + err2.String())
- 		os.Exit(0)
- 	}
+        println("new importer:" + err.String())
+        os.Exit(0)
+  	}
+  	if err2 != nil {
+  		println(err2.String())
+  		os.Exit(0)
+  	}
+
+  	for y := 0; y < 10; y++ {
+  		var v stringStruct
+		v = <-ch
+		println(v.s)
+  	}
+
+  	exp, err3 := netchan.NewExporter("tcp", ":4568")
+	if err3 != nil {
+		println(err3.String())
+		os.Exit(0)
+	}
+	err4 := exp.Export("CliImp", ch, netchan.Send, new(stringStruct))
+	if err4 != nil {
+		println(err4.String())
+		os.Exit(0)
+	}
  	
 	for x := 0; x < 10; x++ { 
-		ch <-("Happy Pants" + strconv.Itoa(x))
+		var v stringStruct
+		v.s = "Happy Pants" + strconv.Itoa(x)
+		ch <- v
 	}
-	
-  for y := 0; y < 10; y++ {
-		v := <-ch
-		println(v)
-  }
 }
 
