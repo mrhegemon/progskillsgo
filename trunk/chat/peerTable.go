@@ -1,6 +1,6 @@
 package chat
 
-import("sync"; "strconv")
+import("sync"; "strconv"; "websocket")
 
 type PeerTable struct {
 	table map[int]Peer
