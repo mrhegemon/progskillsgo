@@ -1,6 +1,6 @@
 package chat
 
-import("websocket", "bufio"; "sync")
+import("websocket"; "bufio"; "sync")
 
 type Peer struct {
 	msgs chan string
@@ -11,15 +11,15 @@ type Peer struct {
 }
 
 func(this *Peer) sendMessage(message string) {
-	msgs <- message
+	this.msgs <- message
 }
 
 func(this *Peer) printLoop() {
 	for {
 		message := <- msgs
-		_, err := conn.Write([]byte(message))
+		_, err := this.conn.Write([]byte(message))
 		if err != nil {
-			table.removePeer(id)
+			this.table.removePeer(this.id)
 			conn.Close()
 			break
 		}
@@ -29,7 +29,7 @@ func(this *Peer) printLoop() {
 func(this *Peer) readLoop() {
 	for {
 		reader := bufio.NewReader(conn)
-		message, err := reader.ReadString("\n")
+		message, err := reader.ReadString([]byte("\n"))
 		if err != nil {
 			println(err.String())
 			conn.Close()
