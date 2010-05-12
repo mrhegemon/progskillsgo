@@ -36,7 +36,8 @@ func main() {
 		println(err3.String())
 		os.Exit(0)
 	}
-	err4 := exp.Export("CliImp", ch, netchan.Send, new(stringStruct))
+	chn := make(chan stringStruct)
+	err4 := exp.Export("CliImp", chn, netchan.Send, new(stringStruct))
 	if err4 != nil {
 		println(err4.String())
 		os.Exit(0)
@@ -45,7 +46,7 @@ func main() {
 	for x := 0; x < 10; x++ { 
 		var v stringStruct
 		v.s = "Happy Pants" + strconv.Itoa(x)
-		ch <- v
+		chn <- v
 	}
 }
 

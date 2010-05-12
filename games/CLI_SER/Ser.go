@@ -36,7 +36,8 @@ func main() {
 		println(err3.String())
 		os.Exit(0)
 	}
-	err4 := imp.Import("CliImp", ch, netchan.Recv, new(stringStruct))
+	chn := make(chan stringStruct)
+	err4 := imp.Import("CliImp", chn, netchan.Recv, new(stringStruct))
 	if err4 != nil {
 		println(err4.String())
 		os.Exit(0)
@@ -44,7 +45,7 @@ func main() {
 	
 	for y := 0; y < 10; y++ {
   		var v stringStruct
-		v = <-ch
+		v = <-chn
 		println(v.s)
   	}
 }

@@ -12,11 +12,7 @@ usage:
 package view
 
 import . "sstruct"
-import "games"
-import "os"
-import "io"
-import "fmt"
-import "strconv"
+import ("games"; "os"; "io"; "fmt"; "strconv")
 
 type GView struct {
 	inOut io.ReadWriter
@@ -29,7 +25,8 @@ type GView struct {
 //inout = input/output
 //n = this view's name
 //dir = the directions for this game
-//ref = the channel that Loop() will communicate with
+//iref = the channel that Loop() will communicate with for input
+//oref = the channel that Loop() will communicate with for output
 func NewGView(inout io.ReadWriter, n, dir string, iref, oref chan StringStruct) *GView {
 	view := new(GView)
 	view.inOut = inout
@@ -41,6 +38,7 @@ func NewGView(inout io.ReadWriter, n, dir string, iref, oref chan StringStruct) 
 	return view
 }
 
+//Enables the view, and prompts the user with directions
 func (this *GView) Enable() {
 	text := ([]byte) (this.name + "'s move (" + this.directions + "):  ")
 	if _, err := this.inOut.Write(text); err != nil {
@@ -48,10 +46,12 @@ func (this *GView) Enable() {
 	}
 }
 
+//Sets the opponent's move
 func(this *GView) Set(move interface{}) {
 	this.other = move.(string)
 }
 
+//Gets the user's move and returns it
 func(this *GView) Get() interface{} {
 if this == nil {
 	return nil
@@ -70,6 +70,8 @@ if this == nil {
 return ""
 }
 
+
+//Runs the view
 func (this *GView) Loop() os.Error {
 	done := false
 	for !done {
@@ -115,10 +117,12 @@ func (this *GView) Loop() os.Error {
 	return nil
 }
 
+//Display's the opponent's move
 func(this *GView) Display() {
 	this.inOut.Write(([]byte) (this.other))
 }
 
+//Tells the user the end state
 func(this *GView) Done(youWin games.Outcome) {
 	if youWin == games.Win {
 		this.inOut.Write(([]byte) (this.name + " won.\n"))

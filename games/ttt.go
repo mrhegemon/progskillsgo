@@ -5,8 +5,6 @@ Tick Tack Toe game
 Written in a pattern of serial turn taking.  TTT must extend 
 asymmetrically when using channels over a network.
 
-usage:
-	ttt-stdin [terminal]
 */
 
 package ttt
@@ -25,7 +23,8 @@ var (
 	full int = 0
 )
 
-func Ref(aComm, bComm chan StringStruct) {
+//game referee
+func Ref(aIn, aOut, bIn, bOut chan StringStruct) {
 	for {
 		stillPlaying := true
 	
@@ -43,20 +42,21 @@ func Ref(aComm, bComm chan StringStruct) {
 	
 		for stillPlaying {
 	
-			AMOVE: aComm <- Make("enable")
-			aComm <- Make("get")
+			AMOVE: aIn <- Make("enable")
+			aIn <- Make("get")
 	
-			aMove := Make(strings.TrimSpace(<- aComm))
-			if aMove.S == "q" { bComm <- Make("quit") }
+			aMove := strings.TrimSpace((<- aOut).S)
+			if aMove == "q" { bIn <- Make("quit") }
 	
-			if setGame(aMove.S, "A") != nil {
+			if setGame(aMove, "A") != nil {
+				println("goto")
 				//tell A it's move was bad
 				//GO BACK and repeat A's move
 				goto AMOVE
 			}
-			bComm <- Make("other")
-			bComm <- Make("A's move:  " + aMove + "\n")
-			bComm <- Make("display")
+			bIn <- Make("other")
+			bIn <- Make("A's move:  " + aMove + "\n")
+			bIn <- Make("display")
 	
 			//check for win state
 			winA := winner("A")
@@ -76,23 +76,23 @@ func Ref(aComm, bComm chan StringStruct) {
 			}
 	
 			if stillPlaying {
-				BMOVE: bComm <- Make("enable")
+				BMOVE: bIn <- Make("enable")
 	
-				bComm <- Make("get")
+				bIn <- Make("get")
 			
-				bMove := strings.TrimSpace(<- bComm) 
-				if bMove.S == "q" { aComm <- "quit" }
+				bMove := strings.TrimSpace((<- bOut).S)
+				if bMove == "q" { aIn <- Make("quit") }
 			
-				if setGame(bMove.S, "B") != nil {
+				if setGame(bMove, "B") != nil {
 					//tell B it's move was bad
 					//GO BACK and repeat B's move
 					goto BMOVE
 				}
 	
-				aComm <- Make("other")
-				aComm <- Make("B's move:  " + bMove + "\n")
+				aIn <- Make("other")
+				aIn <- Make("B's move:  " + bMove + "\n")
 	
-				aComm <- Make"display")
+				aIn <- Make("display")
 	
 				//check for win state
 				winA := winner("A")
@@ -113,13 +113,14 @@ func Ref(aComm, bComm chan StringStruct) {
 			}	
 		}
 	
-		aComm <- Make("result")
-		bComm <- Make("result")
-		aComm <- Make(resA)
-		bComm <- Make(resB)
+		aIn <- Make("result")
+		bIn <- Make("result")
+		aIn <- Make(resA)
+		bIn <- Make(resB)
 	}
 }
 
+//sets a move in the gameboard and returns error if filled
 func setGame(m, p string) os.Error {
 	switch m {	
 		case "n" : {
@@ -194,10 +195,9 @@ func setGame(m, p string) os.Error {
 	return nil
 }
 	
-
+//checks board for a winner
 func winner(name string) games.Outcome {
 	//TTT GAME LOGIC
-
 	winner := false
 	for row := 0; row < x; row++ {
 		if (mtx[row].At(0) == name && mtx[row].At(1) == name && mtx[row].At(2) == name) {

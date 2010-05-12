@@ -1,22 +1,19 @@
 /*
-Authors: William Broza, Tym Lipari
-Rock Paper Scissors game
-
-Written in a pattern of serial turn taking.  TTT must extend 
-asymmetrically when using channels over a network.
-
-usage:
-	rps-stdin [terminal]
+ Referee package for Rock Paper Scissors
 */
 
 package rps
 
 import "games"
-import . "sstruct"
 import "strconv"
 import "strings"
 import . "sstruct"
-			
+
+//Ref: referee function for rps
+//aIn = Player A's input channel (send commands TO A)
+//aOut = Player A's output channel (receives commands FROM A)
+//bIn = Player B's input channel
+//bOut = Player B's output channel
 func Ref(aIn, aOut, bIn, bOut chan StringStruct) {
 	
 	stillPlaying := true
@@ -47,8 +44,8 @@ func Ref(aIn, aOut, bIn, bOut chan StringStruct) {
 			aIn <- Make("result")
 			bIn <- Make("result")
 			
-			aResult := Make(strconv.Itoa((int) (winner(aMove.S, bMove.S))))
-			bResult := Make(strconv.Itoa((int) (winner(bMove.S, aMove.S))))	
+			aResult := strconv.Itoa((int) (winner(aMove, bMove)))
+			bResult := strconv.Itoa((int) (winner(bMove, aMove)))
 			
 			aIn <- Make(aResult)
 			bIn <- Make(bResult)
@@ -56,6 +53,8 @@ func Ref(aIn, aOut, bIn, bOut chan StringStruct) {
 	}
 }
 
+//determine the win state for the game
+//(determines based on "a" value)
 func winner(a, b string) games.Outcome {
 	if a == b { 
 		return games.Draw 

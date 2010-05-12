@@ -1,6 +1,6 @@
 include $(GOROOT)/src/Make.$(GOARCH)
 
-all:	$(O) $(O)/rps-net #$(O)/rps-stdin $(O)/ttt-stdin $(O)/rps-net $(O)/rps-stdin-ai
+all:	$(O) $(O)/rps-net $(O)/rps-stdin $(O)/ttt-stdin $(O)/rps-net  $(O)/ttt-net #$(O)/rps-stdin-ai
 
 clean:
 	rm -rf [568vq] *.[586vq]
@@ -18,11 +18,17 @@ $(O)/rps-stdin-ai:	rps-main-ai.$(O)
 $(O)/ttt-stdin:  ttt-main.$(O)
 	$(O)l -o $(O)/ttt-stdin -L . ttt-main.$(O)
 
-$(O)/rps-net:	net.$(O)
-	$(O)l -o $(O)/rps-net -L . net.$(O)
+$(O)/rps-net:	rps-net.$(O)
+	$(O)l -o $(O)/rps-net -L . rps-net.$(O)
 
-net.$(O):	net.go view.$(O) rps.$(O)
-	$(O)g -I . net.go
+$(O)/ttt-net:	ttt-net.$(O)
+	$(O)l -o $(O)/ttt-net -L . ttt-net.$(O)
+
+rps-net.$(O):	rps-net.go view.$(O) rps.$(O)
+	$(O)g -I . rps-net.go
+
+ttt-net.$(O):	ttt-net.go view.$(O) ttt.$(O)
+	$(O)g -I . ttt-net.go
 
 games.$(O): games.go
 	$(O)g games.go
@@ -39,7 +45,7 @@ ai.$(O):	games.$(O) ai.go
 view.$(O):	games.$(O) sstruct.$(O)
 	$(O)g -I . view.go
 
-rps.$(O):	rps.go games.$(O) sstruct.$(O)
+rps.$(O):	rps.go games.$(O) sstruct.$(O) view.$(O)
 	$(O)g -I . rps.go
 
 ttt-main.$(O): view.$(O) ttt.$(O) ttt-main.go
