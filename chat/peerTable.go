@@ -25,6 +25,10 @@ func(this *PeerTable) newPeer(c *websocket.Conn) *Peer {
 	peer.id = len(table)
 	peer.table = this
 	peer.conn = c
+	peer.msgs = make(chan string, 20)
+	
+	go peer.printLoop()
+	go peer.readLopp()
 	
 	return peer
 }
@@ -32,7 +36,7 @@ func(this *PeerTable) newPeer(c *websocket.Conn) *Peer {
 func NewPeerTable() *PeerTable {
 	tab := new(PeerTable)
 	tab.table = make(map[int]Peer)
-	
+			
 	return tab
 }
 	
