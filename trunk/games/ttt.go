@@ -48,7 +48,7 @@ func Ref(aIn, aOut, bIn, bOut chan StringStruct) {
 			aMove := strings.TrimSpace((<- aOut).S)
 			if aMove == "q" { bIn <- Make("quit") }
 	
-			if setGame(aMove, "A") != nil {
+			if setGame(aMove.S, "A") != nil {
 				println("goto")
 				//tell A it's move was bad
 				//GO BACK and repeat A's move
@@ -83,7 +83,7 @@ func Ref(aIn, aOut, bIn, bOut chan StringStruct) {
 				bMove := strings.TrimSpace((<- bOut).S)
 				if bMove == "q" { aIn <- Make("quit") }
 			
-				if setGame(bMove, "B") != nil {
+				if setGame(bMove.S, "B") != nil {
 					//tell B it's move was bad
 					//GO BACK and repeat B's move
 					goto BMOVE
