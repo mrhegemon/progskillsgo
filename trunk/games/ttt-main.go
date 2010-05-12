@@ -17,6 +17,7 @@ func main() {
 	term := os.Stdin
 	var err os.Error
 	
+	//reads arguments
 	if len(os.Args) > 1 {
 		term, err = os.Open(os.Args[1], os.O_RDWR, 511)
 		if err != nil { term = os.Stdin }
@@ -25,11 +26,12 @@ func main() {
 	aComm := make(chan StringStruct)
 	bComm := make(chan StringStruct)
 	
+	//instructions to be sent
 	a := view.NewGView(os.Stdin, "A", "n, s, e, w, c, nw, ne, sw, se", aComm, aComm)
 	b := view.NewGView(term, "B", "n, s, e, w, c, nw, ne, sw, se", bComm, bComm)
 	
 	go a.Loop()
 	go b.Loop()
 
-	ttt.Ref(aComm, bComm)
+	ttt.Ref(aComm, aComm, bComm, bComm)
 }
