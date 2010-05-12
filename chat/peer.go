@@ -1,6 +1,6 @@
 package chat
 
-import("websocket")
+import("websocket", "bufio"; "sync")
 
 type Peer struct {
 	msgs chan string
